@@ -8,7 +8,7 @@ public class User {
 
     @Id @GeneratedValue
     @Column(name = "u_id")
-    private int userId;
+    private Long userId;
 
     @Column(name = "u_nickname", unique = true, length = 20)
     private String userNickname;
