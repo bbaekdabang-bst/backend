@@ -1,7 +1,9 @@
 package com.bbacks.bst.user.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
 
+@Getter
 @Entity
 @Table(name = "user")
 public class User {
