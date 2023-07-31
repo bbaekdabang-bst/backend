@@ -15,11 +15,11 @@ public class ReviewComment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "r_id")
-    private Review reviewId;
+    private Review review;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    private User userId;
+    private User user;
 
     @Column(name = "comment_text")
     private String commentText;

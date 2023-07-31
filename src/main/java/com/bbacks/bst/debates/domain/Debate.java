@@ -16,13 +16,14 @@ public class Debate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "b_id")
-    private Book bookId;
+    private Book book;
 
     @Column(name = "deb_topic")
     private String debateTopic;
 
     @Column(name = "deb_type")
-    private Integer debateType;
+    @Enumerated(EnumType.ORDINAL)
+    private DebateType debateType;
 
     @Column(name = "deb_pw")
     private String debatePassword;

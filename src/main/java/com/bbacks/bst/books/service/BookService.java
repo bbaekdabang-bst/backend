@@ -1,21 +1,42 @@
-package com.bbacks.bst.books;
+package com.bbacks.bst.books.service;
 
+import com.bbacks.bst.books.domain.Book;
+import com.bbacks.bst.books.dto.BookMainResponse;
+import com.bbacks.bst.books.repository.BookDetail;
+import com.bbacks.bst.books.repository.BookImgAndId;
+import com.bbacks.bst.books.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Transactional
 @Service
 @RequiredArgsConstructor
 public class BookService {
     private final BookRepository bookRepository;
 
-    public List<BookImgAndId> findAllBooks(){
-//        return bookRepository.findAll(Sort.by(Sort.Direction.ASC, "bookId"));
-        return bookRepository.findTop10ByOrderByBookIdAsc();
+    @Transactional(readOnly = true)
+    public BookMainResponse getMainBooks(){
+        /**
+         * 의문. 만약 Top10, Recent10이 아니라 다른 조건으로 조회할 데이터가 변경된다면?
+         *      현재는 bookRepository에 메소드 하나 추가하고, 이 부분을 변경해줘야 한다.
+         */
+        List<BookImgAndId> bookImgAndIdList1 = bookRepository.findTop10ByOrderByBookIdAsc();
+        List<BookImgAndId> bookImgAndIdList2 = bookRepository.findTop10ByOrderByBookPubYearDesc();
+
+        return BookMainResponse.of(bookImgAndIdList1, bookImgAndIdList2);
 
     }
+
+    @Transactional(readOnly = true)
+    public List<BookImgAndId> getBooksByKeyword(String keyword){
+        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
+    }
+
+    public BookDetail getBookDetail(Long bookId){
+        return bookRepository.findByBookId(bookId);
+    }
+
+
 }

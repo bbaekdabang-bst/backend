@@ -1,4 +1,4 @@
-package com.bbacks.bst.common.response;
+package com.bbacks.bst.common.exception;
 
 public enum ExceptionType {
     POST_NOT_FOUND("존재하지 않는 리소스입니다."),

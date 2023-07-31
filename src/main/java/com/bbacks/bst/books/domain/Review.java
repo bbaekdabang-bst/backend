@@ -4,6 +4,7 @@ import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -16,11 +17,11 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    private User userId;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "b_id")
-    private Book bookId;
+    private Book book;
 
     @Column(name = "r_title")
     private String reviewTitle;
@@ -28,8 +29,8 @@ public class Review {
     @Column(name = "r_picture")
     private String reviewImg;
 
-    @Column(name = "r_text")
-    private String reviewText;
+    @Column(name = "r_content")
+    private String reviewContent;
 
     @Column(name = "r_spoiler", columnDefinition = "TINYINT(1)")
     private Boolean reviewSpoiler;
@@ -40,9 +41,8 @@ public class Review {
     @Column(name = "r_created_date")
     private String reviewCreatedDate;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "r_id")
-    private List<ReviewComment> reviewComment;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review")
+    private List<ReviewComment> reviewComment = new ArrayList<>();
 
 
 }

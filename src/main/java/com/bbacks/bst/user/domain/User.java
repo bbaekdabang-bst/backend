@@ -33,8 +33,7 @@ public class User {
     @Column(name = "u_refresh_token")
     private String userToken;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "u_id")
-    private List<Review> reviews;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+//    private List<Review> reviews;
 
 }
