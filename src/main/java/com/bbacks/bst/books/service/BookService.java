@@ -5,6 +5,7 @@ import com.bbacks.bst.books.dto.BookMainResponse;
 import com.bbacks.bst.books.repository.BookDetail;
 import com.bbacks.bst.books.repository.BookImgAndId;
 import com.bbacks.bst.books.repository.BookRepository;
+import com.bbacks.bst.books.repository.BookToReview;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,12 +32,18 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookImgAndId> getBooksByKeyword(String keyword){
-        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
+        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrBookPublisherContainingOrderByBookIdAsc(keyword, keyword, keyword);
     }
 
+    @Transactional(readOnly = true)
     public BookDetail getBookDetail(Long bookId){
         return bookRepository.findByBookId(bookId);
     }
 
+    @Transactional(readOnly = true)
+    public List<BookToReview> searchBookToReview(String keyword)
+    {
+        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
+    }
 
 }

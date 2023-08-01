@@ -11,7 +11,7 @@ import java.util.List;
 @Table(name = "review")
 @Getter
 public class Review {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "r_id")
     private Long reviewId;
 

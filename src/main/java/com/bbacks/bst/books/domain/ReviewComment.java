@@ -9,7 +9,7 @@ import lombok.Getter;
 @Table(name = "review_comment")
 @Getter
 public class ReviewComment {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
     private Long commentId;
 
