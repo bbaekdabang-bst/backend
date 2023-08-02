@@ -2,14 +2,23 @@ package com.bbacks.bst.books.domain;
 
 import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Entity
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "review")
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Review {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "r_id")
@@ -33,16 +42,20 @@ public class Review {
     private String reviewContent;
 
     @Column(name = "r_spoiler", columnDefinition = "TINYINT(1)")
-    private Boolean reviewSpoiler;
+    private Boolean reviewSpoiler = false;
 
     @Column(name = "r_private", columnDefinition = "TINYINT(1)")
-    private Boolean reviewPrivate;
+    private Boolean reviewPrivate = false;
 
-    @Column(name = "r_created_date")
-    private String reviewCreatedDate;
+    @CreatedDate
+    @Column(name = "r_created_date", updatable = false)
+    private Date reviewCreatedDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "review")
     private List<ReviewComment> reviewComment = new ArrayList<>();
 
+    public void setReviewImg(String filePath) {
+        this.reviewImg = filePath;
+    }
 
 }

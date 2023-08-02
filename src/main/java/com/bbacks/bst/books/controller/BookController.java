@@ -2,6 +2,7 @@ package com.bbacks.bst.books.controller;
 
 
 import com.bbacks.bst.books.dto.BookMainResponse;
+import com.bbacks.bst.books.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookDetail;
 import com.bbacks.bst.books.repository.BookImgAndId;
 import com.bbacks.bst.books.repository.BookToReview;
@@ -14,11 +15,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -78,20 +79,18 @@ public class BookController {
     }
 
 
+    @PostMapping(value = "/review/{bookId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+    public ApiResponseDto<?> postBookReview(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId,
+                                            @RequestPart(value = "body") @Valid ReviewRequest reviewRequest,
+                                            @RequestPart(value = "file", required = false) MultipartFile file){
+        /**
+         * 임시 userId
+         */
+        Long userId = 1L;
 
+        Long reviewId = reviewService.postBookReview(bookId, userId, reviewRequest, file);
+        return ApiResponseDto.success(SuccessStatus.POST_SUCCESS);
 
-//    @PostMapping("/review/{bookId}")
-//    public ApiResponseDto<?> postBookReview(){
-//        /**
-//         * bookId -> @PathVariable
-//         * 독후감 제목
-//         * 독후감 내용
-//         * 독후감 사진
-//         * 스포일러 유무
-//         * 비공개 유무
-//         * 유저 id
-//         */
-//
-//    }
+    }
 
 }
