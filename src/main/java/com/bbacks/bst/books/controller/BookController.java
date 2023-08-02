@@ -1,14 +1,16 @@
 package com.bbacks.bst.books.controller;
 
 
+import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.books.dto.BookMainResponse;
-import com.bbacks.bst.books.dto.ReviewRequest;
+import com.bbacks.bst.reviews.dto.BookDetailReviewResponse;
+import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookDetail;
 import com.bbacks.bst.books.repository.BookImgAndId;
 import com.bbacks.bst.books.repository.BookToReview;
-import com.bbacks.bst.books.repository.ReviewDetail;
+import com.bbacks.bst.reviews.repository.ReviewDetail;
 import com.bbacks.bst.books.service.BookService;
-import com.bbacks.bst.books.service.ReviewService;
+import com.bbacks.bst.reviews.service.ReviewService;
 import com.bbacks.bst.common.response.ApiResponseDto;
 import com.bbacks.bst.common.response.SuccessStatus;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,10 +19,12 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
@@ -42,16 +46,34 @@ public class BookController {
 
     @GetMapping("/search")
     public ApiResponseDto<?> searchBookByKeyword(@Parameter(name = "keyword", in = ParameterIn.QUERY) @RequestParam @NotBlank String keyword) {
-
         List<BookImgAndId> keywordContainingBooks = bookService.getBooksByKeyword(keyword);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, keywordContainingBooks);
     }
 
+//    @GetMapping("/detail/{bookId}")
+//    public ApiResponseDto<?> getBookDetail(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId){
+//        BookDetail bookDetail = bookService.getBookDetail(bookId);
+//        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetail);
+//    }
+
     @GetMapping("/detail/{bookId}")
-    public ApiResponseDto<?> getBookDetail(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId){
-        BookDetail bookDetail = bookService.getBookDetail(bookId);
-        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetail);
+    public ApiResponseDto<?> getBookDetail(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId){
+        BookDetailResponse bookDetailResponse = bookService.getBookDetail(bookId);
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailResponse);
     }
+
+    // offset, limit 사용하여 페이징 처리
+    @GetMapping("/detail/{bookId}/review")
+    public ApiResponseDto<?> getBookDetailReviewWithOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId,
+                                                 Pageable pageable) {
+        List<BookDetailReviewResponse> bookDetailReviewResponseList = reviewService.getBookDetailReview(bookId, pageable).getContent();
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReviewResponseList);
+    }
+
+//    @GetMapping("/detail/{bookId}/review")
+//    public ApiResponseDto<?> getBookDetailReviewNoOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId){
+//
+//    }
 
     @GetMapping("/review/search")
     public ApiResponseDto<?> searchBookToReview(@RequestParam @NotBlank String keyword) {
@@ -92,5 +114,7 @@ public class BookController {
         return ApiResponseDto.success(SuccessStatus.POST_SUCCESS);
 
     }
+
+
 
 }

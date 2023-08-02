@@ -2,6 +2,7 @@ package com.bbacks.bst.books.domain;
 
 import com.bbacks.bst.categories.domain.Category;
 import com.bbacks.bst.debates.domain.Debate;
+import com.bbacks.bst.reviews.domain.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -42,7 +43,7 @@ public class Book {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
     private List<Debate> debate = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
-    private List<Review> review = new ArrayList<>();
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "book")
+//    private List<Review> review = new ArrayList<>();
 
 }

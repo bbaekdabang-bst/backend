@@ -1,9 +1,8 @@
 package com.bbacks.bst.books.domain;
 
-import com.bbacks.bst.common.config.RedisConfig;
+import com.bbacks.bst.reviews.domain.Review;
 import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
-import lombok.Builder;
 import lombok.Getter;
 
 @Entity

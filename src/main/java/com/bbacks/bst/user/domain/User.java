@@ -1,10 +1,7 @@
 package com.bbacks.bst.user.domain;
 
-import com.bbacks.bst.books.domain.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Entity

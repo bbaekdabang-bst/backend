@@ -1,17 +1,21 @@
-package com.bbacks.bst.books.service;
+package com.bbacks.bst.reviews.service;
 
 import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.books.domain.Bookmark;
-import com.bbacks.bst.books.domain.Review;
-import com.bbacks.bst.books.dto.ReviewRequest;
+import com.bbacks.bst.books.dto.BookDetailResponse;
+import com.bbacks.bst.reviews.domain.Review;
+import com.bbacks.bst.reviews.dto.BookDetailReviewResponse;
+import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookRepository;
 import com.bbacks.bst.books.repository.BookmarkRepository;
-import com.bbacks.bst.books.repository.ReviewDetail;
-import com.bbacks.bst.books.repository.ReviewRepository;
+import com.bbacks.bst.reviews.repository.ReviewDetail;
+import com.bbacks.bst.reviews.repository.ReviewRepository;
 import com.bbacks.bst.common.utils.S3Service;
 import com.bbacks.bst.user.domain.User;
 import com.bbacks.bst.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,6 +32,14 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final S3Service s3Service;
+
+    @Transactional(readOnly = true)
+    public Page<BookDetailReviewResponse> getBookDetailReview(Long bookId, Pageable pageable){
+        Book book = bookRepository.getReferenceById(bookId);
+        return reviewRepository.findAllByBook(book, pageable)
+                .map(BookDetailReviewResponse::from);
+
+    }
 
     @Transactional(readOnly = true)
     public List<ReviewDetail> getReviewDetail(Long reviewId){

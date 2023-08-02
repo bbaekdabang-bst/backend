@@ -1,11 +1,13 @@
 package com.bbacks.bst.books.service;
 
 import com.bbacks.bst.books.domain.Book;
+import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.books.dto.BookMainResponse;
 import com.bbacks.bst.books.repository.BookDetail;
 import com.bbacks.bst.books.repository.BookImgAndId;
 import com.bbacks.bst.books.repository.BookRepository;
 import com.bbacks.bst.books.repository.BookToReview;
+import com.bbacks.bst.common.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,14 +37,20 @@ public class BookService {
         return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrBookPublisherContainingOrderByBookIdAsc(keyword, keyword, keyword);
     }
 
+//    @Transactional(readOnly = true)
+//    public BookDetail getBookDetail(Long bookId){
+//        return bookRepository.findByBookId(bookId);
+//    }
+
     @Transactional(readOnly = true)
-    public BookDetail getBookDetail(Long bookId){
-        return bookRepository.findByBookId(bookId);
+    public BookDetailResponse getBookDetail(Long bookId) {
+        Book book = bookRepository.findByBookId(bookId).orElseThrow(PostNotFoundException::new);
+        return BookDetailResponse.of(book);
     }
 
     @Transactional(readOnly = true)
-    public List<BookToReview> searchBookToReview(String keyword)
-    {
+    public List<BookToReview> searchBookToReview(String keyword) {
+
         return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
     }
 

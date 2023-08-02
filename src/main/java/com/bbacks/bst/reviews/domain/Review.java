@@ -1,13 +1,12 @@
-package com.bbacks.bst.books.domain;
+package com.bbacks.bst.reviews.domain;
 
+import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

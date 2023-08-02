@@ -1,6 +1,6 @@
-package com.bbacks.bst.books.repository;
+package com.bbacks.bst.reviews.repository;
 
-import com.bbacks.bst.books.domain.ReviewComment;
+import com.bbacks.bst.reviews.domain.ReviewComment;
 
 import java.util.List;
 

@@ -8,10 +8,5 @@ public interface BookImgAndId {
      */
     Long getBookId();
     String getBookImg();
-//    MyCategory getBookCategory();
-//
-//    interface MyCategory {
-//        String getCategoryName();
-//    }
 
 }

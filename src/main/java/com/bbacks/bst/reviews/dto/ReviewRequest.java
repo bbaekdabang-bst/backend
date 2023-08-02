@@ -1,4 +1,4 @@
-package com.bbacks.bst.books.dto;
+package com.bbacks.bst.reviews.dto;
 
 
 import jakarta.validation.constraints.NotNull;
