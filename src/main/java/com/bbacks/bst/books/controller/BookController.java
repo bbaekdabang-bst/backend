@@ -50,30 +50,33 @@ public class BookController {
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, keywordContainingBooks);
     }
 
-//    @GetMapping("/detail/{bookId}")
-//    public ApiResponseDto<?> getBookDetail(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId){
-//        BookDetail bookDetail = bookService.getBookDetail(bookId);
-//        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetail);
-//    }
-
     @GetMapping("/detail/{bookId}")
     public ApiResponseDto<?> getBookDetail(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId){
         BookDetailResponse bookDetailResponse = bookService.getBookDetail(bookId);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailResponse);
     }
 
-    // offset, limit 사용하여 페이징 처리
-    @GetMapping("/detail/{bookId}/review")
-    public ApiResponseDto<?> getBookDetailReviewWithOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId,
-                                                 Pageable pageable) {
-        List<BookDetailReviewResponse> bookDetailReviewResponseList = reviewService.getBookDetailReview(bookId, pageable).getContent();
-        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReviewResponseList);
-    }
-
-//    @GetMapping("/detail/{bookId}/review")
-//    public ApiResponseDto<?> getBookDetailReviewNoOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId){
+//    // offset, limit 사용하여 페이징 처리
+//    @GetMapping("/detail/{bookId}/review2")
+//    public ApiResponseDto<?> getBookDetailReviewWithOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId,
+//                                                 Pageable pageable) {
+//        long startTime = System.currentTimeMillis();
 //
+//        List<BookDetailReviewResponse> bookDetailReviewResponseList = reviewService.getBookDetailReview(bookId, pageable).getContent();
+//
+//
+//        long stopTime = System.currentTimeMillis();
+//        System.out.println("코드 실행 시간:"+(stopTime - startTime));
+//
+//        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReviewResponseList);
 //    }
+
+    @GetMapping("/detail/{bookId}/review")
+    public ApiResponseDto<?> getBookDetailReviewNoOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId,
+                                                         @RequestParam(value = "last", required = false) Long reviewId){
+        List<BookDetailReviewResponse> bookDetailReview = reviewService.getBookDetailReviewNoOffset(bookId, reviewId);
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReview);
+    }
 
     @GetMapping("/review/search")
     public ApiResponseDto<?> searchBookToReview(@RequestParam @NotBlank String keyword) {

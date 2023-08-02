@@ -1,11 +1,13 @@
 package com.bbacks.bst.reviews.dto;
 
 import com.bbacks.bst.reviews.domain.Review;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 @Getter
 @Builder
+@AllArgsConstructor
 public class BookDetailReviewResponse {
     private String reviewTitle;
     private String reviewContent;

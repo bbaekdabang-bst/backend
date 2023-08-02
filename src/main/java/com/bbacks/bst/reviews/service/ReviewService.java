@@ -13,6 +13,9 @@ import com.bbacks.bst.reviews.repository.ReviewRepository;
 import com.bbacks.bst.common.utils.S3Service;
 import com.bbacks.bst.user.domain.User;
 import com.bbacks.bst.user.repository.UserRepository;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +26,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+import static com.bbacks.bst.reviews.domain.QReview.review;
+import static com.bbacks.bst.user.domain.QUser.user;
+
 @Service
 @RequiredArgsConstructor
 public class ReviewService {
@@ -32,6 +38,7 @@ public class ReviewService {
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final S3Service s3Service;
+    private final JPAQueryFactory queryFactory;
 
     @Transactional(readOnly = true)
     public Page<BookDetailReviewResponse> getBookDetailReview(Long bookId, Pageable pageable){
@@ -39,6 +46,25 @@ public class ReviewService {
         return reviewRepository.findAllByBook(book, pageable)
                 .map(BookDetailReviewResponse::from);
 
+    }
+
+    @Transactional(readOnly = true)
+    public List<BookDetailReviewResponse> getBookDetailReviewNoOffset(Long bookId, Long reviewId){
+        BooleanBuilder dynamicLtId = new BooleanBuilder();
+
+        if (reviewId != null) {
+            dynamicLtId.and(review.reviewId.lt(reviewId));
+        }
+
+        return queryFactory.select(Projections.constructor(BookDetailReviewResponse.class,
+                        review.reviewTitle, review.reviewContent, review.reviewId, review.user.userNickname.as("reviewerNickname")))
+                .from(review)
+                .innerJoin(review.user, user)
+                .where(dynamicLtId
+                        .and(review.book.bookId.eq(bookId)))
+                .orderBy(review.reviewId.desc())
+                .limit(3)
+                .fetch();
     }
 
     @Transactional(readOnly = true)
