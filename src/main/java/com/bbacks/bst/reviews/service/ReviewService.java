@@ -2,13 +2,12 @@ package com.bbacks.bst.reviews.service;
 
 import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.books.domain.Bookmark;
-import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.reviews.domain.Review;
-import com.bbacks.bst.reviews.dto.BookDetailReviewResponse;
+import com.bbacks.bst.reviews.dto.ReviewDetailResponse;
+import com.bbacks.bst.reviews.dto.ReviewInBookDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookRepository;
 import com.bbacks.bst.books.repository.BookmarkRepository;
-import com.bbacks.bst.reviews.repository.ReviewDetail;
 import com.bbacks.bst.reviews.repository.ReviewRepository;
 import com.bbacks.bst.common.utils.S3Service;
 import com.bbacks.bst.user.domain.User;
@@ -17,8 +16,6 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -50,14 +47,14 @@ public class ReviewService {
 //    }
 
     @Transactional(readOnly = true)
-    public List<BookDetailReviewResponse> getBookDetailReviewNoOffset(Long bookId, Long reviewId){
+    public List<ReviewInBookDetailResponse> getBookDetailReviewNoOffset(Long bookId, Long reviewId){
         BooleanBuilder dynamicLtId = new BooleanBuilder();
 
         if (reviewId != null) {
             dynamicLtId.and(review.reviewId.lt(reviewId));
         }
 
-        return queryFactory.select(Projections.constructor(BookDetailReviewResponse.class,
+        return queryFactory.select(Projections.constructor(ReviewInBookDetailResponse.class,
                         review.reviewTitle, review.reviewContent, review.reviewId, review.user.userNickname.as("reviewerNickname")))
                 .from(review)
                 .innerJoin(review.user, user)
@@ -69,8 +66,10 @@ public class ReviewService {
     }
 
     @Transactional(readOnly = true)
-    public List<ReviewDetail> getReviewDetail(Long reviewId){
-        return reviewRepository.findByReviewId(reviewId);
+    public ReviewDetailResponse getReviewDetail(Long reviewId){
+
+        Review review = reviewRepository.findByReviewId(reviewId);
+        return ReviewDetailResponse.from(review);
     }
 
     @Transactional

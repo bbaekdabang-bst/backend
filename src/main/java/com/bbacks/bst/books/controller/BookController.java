@@ -4,10 +4,10 @@ package com.bbacks.bst.books.controller;
 import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.books.dto.BookMainResponse;
 import com.bbacks.bst.books.dto.BookToReviewResponse;
-import com.bbacks.bst.reviews.dto.BookDetailReviewResponse;
+import com.bbacks.bst.reviews.dto.ReviewDetailResponse;
+import com.bbacks.bst.reviews.dto.ReviewInBookDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookImgAndId;
-import com.bbacks.bst.reviews.repository.ReviewDetail;
 import com.bbacks.bst.books.service.BookService;
 import com.bbacks.bst.reviews.service.ReviewService;
 import com.bbacks.bst.common.response.ApiResponseDto;
@@ -71,7 +71,7 @@ public class BookController {
     @GetMapping("/detail/{bookId}/review")
     public ApiResponseDto<?> getBookDetailReviewNoOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId,
                                                          @RequestParam(value = "last", required = false) Long reviewId){
-        List<BookDetailReviewResponse> bookDetailReview = reviewService.getBookDetailReviewNoOffset(bookId, reviewId);
+        List<ReviewInBookDetailResponse> bookDetailReview = reviewService.getBookDetailReviewNoOffset(bookId, reviewId);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReview);
     }
 
@@ -83,8 +83,8 @@ public class BookController {
 
     @GetMapping("/review/{reviewId}")
     public ApiResponseDto<?> getBookReviewDetail(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
-        List<ReviewDetail> reviewDetails = reviewService.getReviewDetail(reviewId);
-        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewDetails);
+        ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId);
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewDetailResponse);
     }
 
     @GetMapping("/review/{reviewId}/bookmark")
