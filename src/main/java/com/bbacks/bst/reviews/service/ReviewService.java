@@ -40,13 +40,14 @@ public class ReviewService {
     private final S3Service s3Service;
     private final JPAQueryFactory queryFactory;
 
-    @Transactional(readOnly = true)
-    public Page<BookDetailReviewResponse> getBookDetailReview(Long bookId, Pageable pageable){
-        Book book = bookRepository.getReferenceById(bookId);
-        return reviewRepository.findAllByBook(book, pageable)
-                .map(BookDetailReviewResponse::from);
-
-    }
+//    // offset, limit 사용하여 페이징 처리
+//    @Transactional(readOnly = true)
+//    public Page<BookDetailReviewResponse> getBookDetailReview(Long bookId, Pageable pageable){
+//        Book book = bookRepository.getReferenceById(bookId);
+//        return reviewRepository.findAllByBook(book, pageable)
+//                .map(BookDetailReviewResponse::from);
+//
+//    }
 
     @Transactional(readOnly = true)
     public List<BookDetailReviewResponse> getBookDetailReviewNoOffset(Long bookId, Long reviewId){

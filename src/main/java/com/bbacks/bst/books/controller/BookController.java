@@ -3,11 +3,10 @@ package com.bbacks.bst.books.controller;
 
 import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.books.dto.BookMainResponse;
+import com.bbacks.bst.books.dto.BookToReviewResponse;
 import com.bbacks.bst.reviews.dto.BookDetailReviewResponse;
 import com.bbacks.bst.reviews.dto.ReviewRequest;
-import com.bbacks.bst.books.repository.BookDetail;
 import com.bbacks.bst.books.repository.BookImgAndId;
-import com.bbacks.bst.books.repository.BookToReview;
 import com.bbacks.bst.reviews.repository.ReviewDetail;
 import com.bbacks.bst.books.service.BookService;
 import com.bbacks.bst.reviews.service.ReviewService;
@@ -19,12 +18,10 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 
@@ -80,7 +77,7 @@ public class BookController {
 
     @GetMapping("/review/search")
     public ApiResponseDto<?> searchBookToReview(@RequestParam @NotBlank String keyword) {
-        List<BookToReview> bookToReview = bookService.searchBookToReview(keyword);
+        List<BookToReviewResponse> bookToReview = bookService.searchBookToReview(keyword);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookToReview);
     }
 

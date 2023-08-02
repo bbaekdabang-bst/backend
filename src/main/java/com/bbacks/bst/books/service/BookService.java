@@ -3,16 +3,16 @@ package com.bbacks.bst.books.service;
 import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.books.dto.BookMainResponse;
-import com.bbacks.bst.books.repository.BookDetail;
+import com.bbacks.bst.books.dto.BookToReviewResponse;
 import com.bbacks.bst.books.repository.BookImgAndId;
 import com.bbacks.bst.books.repository.BookRepository;
-import com.bbacks.bst.books.repository.BookToReview;
 import com.bbacks.bst.common.exception.PostNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -37,21 +37,20 @@ public class BookService {
         return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrBookPublisherContainingOrderByBookIdAsc(keyword, keyword, keyword);
     }
 
-//    @Transactional(readOnly = true)
-//    public BookDetail getBookDetail(Long bookId){
-//        return bookRepository.findByBookId(bookId);
-//    }
-
     @Transactional(readOnly = true)
     public BookDetailResponse getBookDetail(Long bookId) {
         Book book = bookRepository.findByBookId(bookId).orElseThrow(PostNotFoundException::new);
-        return BookDetailResponse.of(book);
+        BookDetailResponse bookDetailResponse = BookDetailResponse.of(book);
+        return bookDetailResponse;
     }
 
     @Transactional(readOnly = true)
-    public List<BookToReview> searchBookToReview(String keyword) {
-
-        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
+    public List<BookToReviewResponse> searchBookToReview(String keyword) {
+        List<Book> books = bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
+        return books.stream()
+                .map(BookToReviewResponse::from)
+                .collect(Collectors.toList());
+//        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
     }
 
 }
