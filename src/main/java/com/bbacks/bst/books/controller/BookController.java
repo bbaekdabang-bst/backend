@@ -19,6 +19,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -88,11 +89,13 @@ public class BookController {
     }
 
     @GetMapping("/review/{reviewId}/bookmark")
-    public ApiResponseDto<?> bookmarkReview(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
+    public ApiResponseDto<?> bookmarkReview(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId,
+                                            Authentication authentication){
         /**
          * 임시 userId
          */
-        Long userId = 1L;
+        Long userId = Long.parseLong(authentication.getName());
+
         Long responseStatus = reviewService.bookmarkReview(userId, reviewId);
         if(responseStatus==0){
             return ApiResponseDto.success(SuccessStatus.BOOKMARK_DELETE_SUCCESS);

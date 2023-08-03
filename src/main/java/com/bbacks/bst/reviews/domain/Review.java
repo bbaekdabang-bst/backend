@@ -50,7 +50,7 @@ public class Review {
     @Column(name = "r_created_date", updatable = false)
     private Date reviewCreatedDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewComment> reviewComment = new ArrayList<>();
 
     public void setReviewImg(String filePath) {
