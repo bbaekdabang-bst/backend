@@ -1,6 +1,6 @@
-package com.bbacks.bst.books.repository;
+package com.bbacks.bst.reviews.repository;
 
-import com.bbacks.bst.books.domain.Bookmark;
+import com.bbacks.bst.reviews.domain.Bookmark;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

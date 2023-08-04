@@ -1,4 +1,4 @@
-package com.bbacks.bst.books.domain;
+package com.bbacks.bst.reviews.domain;
 
 import com.bbacks.bst.reviews.domain.Review;
 import com.bbacks.bst.user.domain.User;
