@@ -51,6 +51,7 @@ public class Review {
     private Date reviewCreatedDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
+    @OrderBy("commentId DESC")
     private List<ReviewComment> reviewComment = new ArrayList<>();
 
     public void setReviewImg(String filePath) {

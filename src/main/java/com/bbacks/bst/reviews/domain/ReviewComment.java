@@ -2,12 +2,15 @@ package com.bbacks.bst.reviews.domain;
 
 import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.*;
 
 
 @Entity
 @Table(name = "review_comment")
 @Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReviewComment {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "comment_id")
@@ -23,6 +26,5 @@ public class ReviewComment {
 
     @Column(name = "comment_text")
     private String commentText;
-
 
 }

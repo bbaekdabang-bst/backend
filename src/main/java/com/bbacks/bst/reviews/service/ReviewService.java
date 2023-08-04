@@ -3,11 +3,14 @@ package com.bbacks.bst.reviews.service;
 import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.books.domain.Bookmark;
 import com.bbacks.bst.reviews.domain.Review;
+import com.bbacks.bst.reviews.domain.ReviewComment;
+import com.bbacks.bst.reviews.dto.ReviewCommentRequest;
 import com.bbacks.bst.reviews.dto.ReviewDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewInBookDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookRepository;
 import com.bbacks.bst.books.repository.BookmarkRepository;
+import com.bbacks.bst.reviews.repository.ReviewCommentRepository;
 import com.bbacks.bst.reviews.repository.ReviewRepository;
 import com.bbacks.bst.common.utils.S3Service;
 import com.bbacks.bst.user.domain.User;
@@ -34,6 +37,8 @@ public class ReviewService {
     private final BookmarkRepository bookmarkRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
+    private final ReviewCommentRepository commentRepository;
+
     private final S3Service s3Service;
     private final JPAQueryFactory queryFactory;
 
@@ -111,13 +116,27 @@ public class ReviewService {
 
         return reviewRepository.save(review).getReviewId();
 
+    }
 
+    @Transactional
+    public Long postReviewComment(Long reviewId, Long userId, ReviewCommentRequest commentRequest) {
+        User user = userRepository.getReferenceById(userId);
+        Review review = reviewRepository.getReferenceById(reviewId);
+
+        ReviewComment reviewComment = ReviewComment.builder()
+                .review(review)
+                .user(user)
+                .commentText(commentRequest.getComment())
+                .build();
+
+        return commentRepository.save(reviewComment).getCommentId();
     }
 
     private void fileUpload(Review review, MultipartFile file) {
         String fileName = s3Service.uploadFile(file);
         review.setReviewImg(fileName);
     }
+
 
 
     /**

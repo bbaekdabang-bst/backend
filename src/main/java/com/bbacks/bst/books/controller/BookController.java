@@ -76,48 +76,5 @@ public class BookController {
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReview);
     }
 
-    @GetMapping("/review/search")
-    public ApiResponseDto<?> searchBookToReview(@RequestParam @NotBlank String keyword) {
-        List<BookToReviewResponse> bookToReview = bookService.searchBookToReview(keyword);
-        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookToReview);
-    }
-
-    @GetMapping("/review/{reviewId}")
-    public ApiResponseDto<?> getBookReviewDetail(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
-        ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId);
-        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewDetailResponse);
-    }
-
-    @GetMapping("/review/{reviewId}/bookmark")
-    public ApiResponseDto<?> bookmarkReview(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId,
-                                            Authentication authentication){
-        /**
-         * 임시 userId
-         */
-        Long userId = Long.parseLong(authentication.getName());
-
-        Long responseStatus = reviewService.bookmarkReview(userId, reviewId);
-        if(responseStatus==0){
-            return ApiResponseDto.success(SuccessStatus.BOOKMARK_DELETE_SUCCESS);
-        }
-        return ApiResponseDto.success(SuccessStatus.BOOKMARK_SAVE_SUCCESS);
-    }
-
-
-    @PostMapping(value = "/review/{bookId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-    public ApiResponseDto<?> postBookReview(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId,
-                                            @RequestPart(value = "body") @Valid ReviewRequest reviewRequest,
-                                            @RequestPart(value = "file", required = false) MultipartFile file){
-        /**
-         * 임시 userId
-         */
-        Long userId = 1L;
-
-        Long reviewId = reviewService.postBookReview(bookId, userId, reviewRequest, file);
-        return ApiResponseDto.success(SuccessStatus.POST_SUCCESS);
-
-    }
-
-
 
 }

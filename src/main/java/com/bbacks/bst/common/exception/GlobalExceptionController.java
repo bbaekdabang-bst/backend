@@ -44,16 +44,15 @@ public class GlobalExceptionController {
         return ApiResponseDto.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({
             NeedLoginException.class,
-            InvalidTokenException.class,
             NoAccessAuthorizationException.class,
             RefreshTokenException.class,
     })
     public ApiResponseDto handleUnauthorizedException(Exception e) {
         log.warn("UNAUTHORIZED", e);
-        return ApiResponseDto.error(HttpStatus.BAD_REQUEST, e.getMessage());
+        return ApiResponseDto.error(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
