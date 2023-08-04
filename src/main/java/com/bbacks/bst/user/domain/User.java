@@ -1,7 +1,10 @@
 package com.bbacks.bst.user.domain;
 
+import com.bbacks.bst.reviews.domain.Review;
 import jakarta.persistence.*;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 @Entity
@@ -30,7 +33,8 @@ public class User {
     @Column(name = "u_refresh_token")
     private String userToken;
 
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
-//    private List<Review> reviews;
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OrderBy("reviewId DESC")
+    private List<Review> reviews;
 
 }

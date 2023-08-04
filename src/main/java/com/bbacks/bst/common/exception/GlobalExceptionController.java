@@ -44,8 +44,9 @@ public class GlobalExceptionController {
         return ApiResponseDto.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
-//    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler({
+            UserIdNotFoundException.class,
             NeedLoginException.class,
             NoAccessAuthorizationException.class,
             RefreshTokenException.class,

@@ -24,6 +24,7 @@ public class AuthController {
     public ApiResponseDto<?> login(){
         /**
          * 회원가입하려고 가져온 사용자 정보를 토대로 토큰 발급
+         * DB에 없는 사람 가지고 토큰 만들면 안 됨
          */
         Long userId = 1L;
 
