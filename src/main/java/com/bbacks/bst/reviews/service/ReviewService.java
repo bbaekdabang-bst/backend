@@ -1,15 +1,15 @@
 package com.bbacks.bst.reviews.service;
 
 import com.bbacks.bst.books.domain.Book;
-import com.bbacks.bst.reviews.domain.Bookmark;
 import com.bbacks.bst.reviews.domain.Review;
+import com.bbacks.bst.reviews.domain.ReviewBookmark;
 import com.bbacks.bst.reviews.domain.ReviewComment;
 import com.bbacks.bst.reviews.dto.ReviewCommentRequest;
 import com.bbacks.bst.reviews.dto.ReviewDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewInBookDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookRepository;
-import com.bbacks.bst.reviews.repository.BookmarkRepository;
+import com.bbacks.bst.reviews.repository.ReviewBookmarkRepository;
 import com.bbacks.bst.reviews.repository.ReviewCommentRepository;
 import com.bbacks.bst.reviews.repository.ReviewRepository;
 import com.bbacks.bst.common.utils.S3Service;
@@ -34,7 +34,7 @@ import static com.bbacks.bst.user.domain.QUser.user;
 public class ReviewService {
 
     private final ReviewRepository reviewRepository;
-    private final BookmarkRepository bookmarkRepository;
+    private final ReviewBookmarkRepository reviewBookmarkRepository;
     private final UserRepository userRepository;
     private final BookRepository bookRepository;
     private final ReviewCommentRepository commentRepository;
@@ -79,21 +79,21 @@ public class ReviewService {
 
     @Transactional
     public Long bookmarkReview(Long userId, Long reviewId){
-        Optional<Bookmark> checkBookmark = bookmarkRepository.findByUserUserIdAndReviewReviewId(userId, reviewId);
+        Optional<ReviewBookmark> checkBookmark = reviewBookmarkRepository.findByUserUserIdAndReviewReviewId(userId, reviewId);
         if(checkBookmark.isEmpty()){
             /**
              * 없으면 insert
              */
             User user = userRepository.getReferenceById(userId);
             Review review = reviewRepository.getReferenceById(reviewId);
-            Bookmark bookmark = new Bookmark(user, review);
-            return bookmarkRepository.save(bookmark).getBookmarkId();
+            ReviewBookmark bookmark = new ReviewBookmark(user, review);
+            return reviewBookmarkRepository.save(bookmark).getBookmarkId();
         } else {
             /**
              * 이미 있으면 delete
              */
             Long bookmarkId = checkBookmark.get().getBookmarkId();
-            bookmarkRepository.deleteById(bookmarkId);
+            reviewBookmarkRepository.deleteById(bookmarkId);
             return 0L;
         }
     }

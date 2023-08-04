@@ -8,7 +8,7 @@ import lombok.Getter;
 @Entity
 @Table(name = "bookmark")
 @Getter
-public class Bookmark {
+public class ReviewBookmark {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,11 +23,11 @@ public class Bookmark {
     @JoinColumn(name = "r_id")
     private Review review;
 
-    public Bookmark() {
+    public ReviewBookmark() {
 
     }
 
-    public Bookmark(User user, Review review) {
+    public ReviewBookmark(User user, Review review) {
         this.user = user;
         this.review = review;
     }
