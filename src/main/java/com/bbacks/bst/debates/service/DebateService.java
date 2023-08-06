@@ -3,10 +3,13 @@ package com.bbacks.bst.debates.service;
 import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.categories.domain.Category;
 import com.bbacks.bst.debates.domain.Debate;
+import com.bbacks.bst.debates.domain.Post;
 import com.bbacks.bst.debates.domain.UserDebate;
 import com.bbacks.bst.debates.dto.CreateDebateRequest;
 import com.bbacks.bst.debates.dto.DebateOutlineResponse;
 import com.bbacks.bst.debates.dto.MyDebateResponse;
+import com.bbacks.bst.debates.dto.PostDto;
+import com.bbacks.bst.debates.repository.PostRepository;
 import com.bbacks.bst.debates.repository.TempBookRepository;
 import com.bbacks.bst.debates.repository.DebateRepository;
 import com.bbacks.bst.debates.repository.UserDebateRepository;
@@ -28,6 +31,7 @@ public class DebateService {
     private final UserRepository userRepository;
     private final TempBookRepository tempBookRepository;
     private final DebateRepository debateRepository;
+    private final PostRepository postRepository;
 
     // 내가 참여한 토론방
     public List<MyDebateResponse> myDebate(Long userId) {
@@ -107,6 +111,32 @@ public class DebateService {
         return debateRepository.incrementCountByDebateId(debateId);
     }
 
+    // 토론방 피드
+    public List<PostDto> debateFeed(Long debateId) {
+        Debate debate = debateRepository.findById(debateId).get();
+        List<Post> postList = postRepository.findByDebate(debate);
+
+        List<PostDto> posts = new ArrayList<>();
+
+        if(!postList.isEmpty()){
+            for(Post p:postList) {
+                User user = p.getUser();
+                PostDto postDto = PostDto.builder()
+                        .date(p.getPostCreatedAt())
+                        .userNickname(user.getUserNickname())
+                        .userPhoto(user.getUserPhoto())
+                        .content(p.getPostContent())
+                        .like(p.getPostLike())
+                        .dislike(p.getPostDislike())
+                        .isPro(p.getPostIsPro())
+                        .build();
+
+                posts.add(postDto);
+            }
+        }
+
+        return posts;
+    }
 
 
 

@@ -1,15 +1,15 @@
 package com.bbacks.bst.debates.controller;
 
+import com.bbacks.bst.debates.domain.Post;
 import com.bbacks.bst.debates.dto.CreateDebateRequest;
 import com.bbacks.bst.debates.dto.DebateOutlineResponse;
-import com.bbacks.bst.debates.dto.DebateResponse;
 import com.bbacks.bst.debates.dto.MyDebateResponse;
+import com.bbacks.bst.debates.dto.PostDto;
 import com.bbacks.bst.debates.service.DebateService;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
 import java.util.List;
 
 @RestController
@@ -50,4 +50,12 @@ public class DebateController {
         return result;
     }
 
+
+    // 토론방 피드
+    @GetMapping("/debate/feed/{deb-id}")
+    public List<PostDto> debateFeed (@PathVariable("deb-id") Long debateId) {
+        List<PostDto> posts = debateService.debateFeed(debateId);
+
+        return posts;
+    }
 }
