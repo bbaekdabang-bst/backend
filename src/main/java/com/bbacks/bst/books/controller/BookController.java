@@ -3,10 +3,7 @@ package com.bbacks.bst.books.controller;
 
 import com.bbacks.bst.books.dto.BookDetailResponse;
 import com.bbacks.bst.books.dto.BookMainResponse;
-import com.bbacks.bst.books.dto.BookToReviewResponse;
-import com.bbacks.bst.reviews.dto.ReviewDetailResponse;
 import com.bbacks.bst.reviews.dto.ReviewInBookDetailResponse;
-import com.bbacks.bst.reviews.dto.ReviewRequest;
 import com.bbacks.bst.books.repository.BookImgAndId;
 import com.bbacks.bst.books.service.BookService;
 import com.bbacks.bst.reviews.service.ReviewService;
@@ -14,15 +11,10 @@ import com.bbacks.bst.common.response.ApiResponseDto;
 import com.bbacks.bst.common.response.SuccessStatus;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
-import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 

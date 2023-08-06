@@ -4,10 +4,7 @@ import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.reviews.domain.Review;
 import com.bbacks.bst.reviews.domain.ReviewBookmark;
 import com.bbacks.bst.reviews.domain.ReviewComment;
-import com.bbacks.bst.reviews.dto.ReviewCommentRequest;
-import com.bbacks.bst.reviews.dto.ReviewDetailResponse;
-import com.bbacks.bst.reviews.dto.ReviewInBookDetailResponse;
-import com.bbacks.bst.reviews.dto.ReviewRequest;
+import com.bbacks.bst.reviews.dto.*;
 import com.bbacks.bst.books.repository.BookRepository;
 import com.bbacks.bst.reviews.repository.ReviewBookmarkRepository;
 import com.bbacks.bst.reviews.repository.ReviewCommentRepository;
@@ -27,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.bbacks.bst.reviews.domain.QReview.review;
+import static com.bbacks.bst.reviews.domain.QReviewComment.reviewComment;
 import static com.bbacks.bst.user.domain.QUser.user;
 
 @Service
@@ -71,8 +69,33 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public ReviewDetailResponse getReviewDetail(Long reviewId){
-        Review review = reviewRepository.findByReviewId(reviewId);
-        return ReviewDetailResponse.from(review);
+        ReviewDetailResponse response =queryFactory
+                .select(new QReviewDetailResponse(
+                            review.reviewTitle,
+                            review.reviewContent,
+                            review.reviewImg,
+                            user.userNickname,
+                            user.userPhoto
+                    ))
+                .from(review)
+                .innerJoin(review.user, user)
+                .where(review.reviewId.eq(reviewId))
+                .fetchOne();
+        List<ReviewDetailCommentResponse> comments = queryFactory
+                .select(new QReviewDetailCommentResponse(
+                        user.userId,
+                        user.userNickname,
+                        user.userPhoto,
+                        reviewComment.commentText
+                ))
+                .from(reviewComment)
+                .innerJoin(reviewComment.user, user)
+                .where(reviewComment.review.reviewId.eq(reviewId))
+                .fetch();
+
+        response.setReviewComments(comments);
+        return response;
+
     }
 
 
