@@ -1,5 +1,7 @@
 package com.bbacks.bst.debates.controller;
 
+import com.bbacks.bst.common.response.ApiResponseDto;
+import com.bbacks.bst.common.response.SuccessStatus;
 import com.bbacks.bst.debates.domain.Post;
 import com.bbacks.bst.debates.dto.CreateDebateRequest;
 import com.bbacks.bst.debates.dto.DebateOutlineResponse;
@@ -11,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.prefs.AbstractPreferences;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,36 +23,35 @@ public class DebateController {
 
     // 내가 참여한 토론
     @GetMapping("/mydebate")
-    public List<MyDebateResponse> myDebate(@RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> myDebate(@RequestParam("user-id") Long userId) {
         List<MyDebateResponse> myDebateResponses = debateService.myDebate(userId);
 
-        return myDebateResponses;
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, myDebateResponses);
     }
 
     // 토론 개설
     @PostMapping("/debate/create")
-    public Long createDebate(@RequestBody CreateDebateRequest createDebateRequest) {
-        Long result = debateService.createDebate(createDebateRequest);
+    public ApiResponseDto<?> createDebate(@RequestBody CreateDebateRequest createDebateRequest) {
+        debateService.createDebate(createDebateRequest);
 
-        return result;
+        return ApiResponseDto.success(SuccessStatus.CREATE_DEBATE_SUCCESS);
     }
 
     // 토론 개요 페이지
     @GetMapping("/debate/{deb-id}/outline")
-    public DebateOutlineResponse debateOutline(@PathVariable("deb-id") Long debateId) {
+    public ApiResponseDto<?> debateOutline(@PathVariable("deb-id") Long debateId) {
         DebateOutlineResponse debateOutlineResponse = debateService.debateOutline(debateId);
 
-        return debateOutlineResponse;
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, debateOutlineResponse);
     }
 
     // 토론방 참여하기
     @PutMapping("/debate/{deb-id}/join")
-    public int join (@PathVariable("deb-id") Long debateId, @RequestParam("user-id") Long userId) {
-        int result = debateService.join(debateId, userId);
+    public ApiResponseDto<?> join (@PathVariable("deb-id") Long debateId, @RequestParam("user-id") Long userId) {
+        debateService.join(debateId, userId);
 
-        return result;
+        return ApiResponseDto.success(SuccessStatus.JOIN_DEBATE_SUCCESS);
     }
-
 
     // 토론방 피드
     @GetMapping("/debate/feed/{deb-id}")

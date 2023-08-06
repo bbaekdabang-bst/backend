@@ -1,5 +1,7 @@
 package com.bbacks.bst.debates.controller;
 
+import com.bbacks.bst.common.response.ApiResponseDto;
+import com.bbacks.bst.common.response.SuccessStatus;
 import com.bbacks.bst.debates.dto.CreatePostRequest;
 import com.bbacks.bst.debates.dto.ReadPostResponse;
 import com.bbacks.bst.debates.service.PostService;
@@ -17,26 +19,26 @@ public class PostController {
 
     // 글 작성
     @PostMapping("/debate/feed/{deb-id}/create")
-    public Long createPost(@PathVariable("deb-id") Long debateId, @RequestBody CreatePostRequest createPostRequest) {
-        Long postId = postService.createPost(createPostRequest);
+    public ApiResponseDto<?> createPost(@PathVariable("deb-id") Long debateId, @RequestBody CreatePostRequest createPostRequest) {
+        postService.createPost(createPostRequest);
 
-        return postId;
+        return ApiResponseDto.success(SuccessStatus.DEBATE_POST_SUCCESS);
     }
 
     // 글 상세 페이지
     @GetMapping("/debate/post/{deb-id}/{post-id}")
-    public ReadPostResponse readPost(@PathVariable("deb-id") Long debateId, @PathVariable("post-id") Long postId) {
+    public ApiResponseDto<?> readPost(@PathVariable("deb-id") Long debateId, @PathVariable("post-id") Long postId) {
         ReadPostResponse readPostResponse = postService.readPost(postId);
 
-        return readPostResponse;
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, readPostResponse);
     }
 
     // 글 삭제
     @PutMapping("/debate/post/{p-id}/delete")
-    public String deletePost(@PathVariable("p-id") Long postId) {
+    public ApiResponseDto<?> deletePost(@PathVariable("p-id") Long postId) {
         postService.deletePost(postId);
-        String result = Long.toString(postId) + " is deleted";
-        return result;
+
+        return ApiResponseDto.success(SuccessStatus.DELETE_POST_SUCCESS);
     }
 
 }
