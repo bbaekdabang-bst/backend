@@ -18,6 +18,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -60,13 +61,13 @@ public class BookController {
 //                                                 Pageable pageable) {
 //        long startTime = System.currentTimeMillis();
 //
-//        List<BookDetailReviewResponse> bookDetailReviewResponseList = reviewService.getBookDetailReview(bookId, pageable).getContent();
+//        List<ReviewInBookDetailResponse> bookDetailReview = reviewService.getBookDetailReview(bookId, pageable).getContent();
 //
 //
 //        long stopTime = System.currentTimeMillis();
 //        System.out.println("코드 실행 시간:"+(stopTime - startTime));
 //
-//        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReviewResponseList);
+//        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReview);
 //    }
 
     @GetMapping("/detail/{bookId}/review")

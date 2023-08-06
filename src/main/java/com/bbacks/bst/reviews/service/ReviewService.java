@@ -44,11 +44,10 @@ public class ReviewService {
 
 //    // offset, limit 사용하여 페이징 처리
 //    @Transactional(readOnly = true)
-//    public Page<BookDetailReviewResponse> getBookDetailReview(Long bookId, Pageable pageable){
+//    public Page<ReviewInBookDetailResponse> getBookDetailReview(Long bookId, Pageable pageable){
 //        Book book = bookRepository.getReferenceById(bookId);
 //        return reviewRepository.findAllByBook(book, pageable)
-//                .map(BookDetailReviewResponse::from);
-//
+//                .map(ReviewInBookDetailResponse::from);
 //    }
 
     @Transactional(readOnly = true)
@@ -72,10 +71,11 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public ReviewDetailResponse getReviewDetail(Long reviewId){
-
         Review review = reviewRepository.findByReviewId(reviewId);
         return ReviewDetailResponse.from(review);
     }
+
+
 
     @Transactional
     public Long bookmarkReview(Long userId, Long reviewId){
