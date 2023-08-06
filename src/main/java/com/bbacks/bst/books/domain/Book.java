@@ -1,6 +1,6 @@
 package com.bbacks.bst.books.domain;
 
-import com.bbacks.bst.categories.Category;
+import com.bbacks.bst.categories.domain.Category;
 import com.bbacks.bst.debates.domain.Debate;
 import jakarta.persistence.*;
 import lombok.Getter;

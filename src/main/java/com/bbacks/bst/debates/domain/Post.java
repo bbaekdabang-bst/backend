@@ -2,7 +2,9 @@ package com.bbacks.bst.debates.domain;
 
 import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.util.Date;
@@ -10,6 +12,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Table(name = "post")
+@NoArgsConstructor
 public class Post {
     @Id @GeneratedValue
     @Column(name = "p_id")
@@ -17,11 +20,11 @@ public class Post {
 
     @ManyToOne
     @JoinColumn(name="deb_id")
-    private Debate debateId;
+    private Debate debate;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User userId;
+    @JoinColumn(name = "u_id")
+    private User user;
 
     @Column(name = "p_content")
     private String postContent;
@@ -33,16 +36,31 @@ public class Post {
     private Long postQuotationId;
 
     @Column(name = "p_like")
-    private Integer postLike;
+    private Integer postLike = 0;
 
     @Column(name = "p_dislike")
-    private Integer postDislike;
+    private Integer postDislike = 0;
 
     @Column(name = "is_pro")
-    private Boolean postIsPro;
+    private Integer postIsPro;
 
     @CreationTimestamp
     @Column(name = "created_date")
     private Date postCreatedAt;
 
+    @PrePersist
+    public void prePersist() {
+        this.postLike = this.postLike == null ? 0 : this.postLike;
+        this.postDislike = this.postDislike == null ? 0 : this.postDislike;
+    }
+
+    @Builder
+    public Post(Debate debate, User user, String postContent, String postPhoto, Long postQuotationId, Integer postIsPro) {
+        this.debate = debate;
+        this.user = user;
+        this.postContent = postContent;
+        this.postPhoto = postPhoto;
+        this.postQuotationId = postQuotationId;
+        this.postIsPro = postIsPro;
+    }
 }

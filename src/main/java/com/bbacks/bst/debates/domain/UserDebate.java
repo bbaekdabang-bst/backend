@@ -2,11 +2,14 @@ package com.bbacks.bst.debates.domain;
 
 import com.bbacks.bst.user.domain.User;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
 @Table(name = "user_debate")
+@NoArgsConstructor
 public class UserDebate {
 
     @Id @GeneratedValue
@@ -15,9 +18,15 @@ public class UserDebate {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    private User userId;
+    private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deb_id")
-    private Debate debateId;
+    private Debate debate;
+
+    @Builder
+    public UserDebate(User user, Debate debate) {
+        this.user = user;
+        this.debate = debate;
+    }
 }
