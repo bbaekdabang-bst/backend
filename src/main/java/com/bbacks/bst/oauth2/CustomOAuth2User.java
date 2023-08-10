@@ -1,5 +1,6 @@
 package com.bbacks.bst.oauth2;
 
+import com.bbacks.bst.user.domain.PlatformType;
 import com.bbacks.bst.user.domain.Role;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,12 +14,14 @@ public class CustomOAuth2User extends DefaultOAuth2User {
 
     //private String email;
     private Role role;
+    private PlatformType platformType;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
-                            Map<String, Object> attributes, String nameAttributeKey, Role role) {
+                            Map<String, Object> attributes, String nameAttributeKey, Role role, PlatformType platformTyoe) {
         super(authorities, attributes, nameAttributeKey);
         //this.email = email;
         this.role = role;
+        this.platformType = platformTyoe;
     }
 
 }

@@ -1,5 +1,6 @@
 package com.bbacks.bst.jwt.filter;
 
+import com.bbacks.bst.security.CustomUserDetails;
 import com.bbacks.bst.jwt.service.JwtService;
 import com.bbacks.bst.user.domain.PlatformType;
 import com.bbacks.bst.user.domain.User;
@@ -105,10 +106,12 @@ public class JwtAuthenticationProcessingFilter extends OncePerRequestFilter {
      * 해당 객체를 SecurityContextHolder에 담음
      */
     public void saveAuthentication(User myUser){
-        //username: socialId, password: platformType 으로 함
+        String password = null;
+        String username = myUser.getUserPlatform().toString() + myUser.getUserSocialId();
+        //username: platformType + socialId 으로 함
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-                .username(myUser.getUserSocialId())
-                .password(myUser.getUserPlatform().toString())
+                .username(username)
+                .password(password)
                 .roles(myUser.getUserRole().name())
                 .build();
 

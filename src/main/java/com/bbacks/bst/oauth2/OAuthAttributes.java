@@ -61,7 +61,7 @@ public class OAuthAttributes {
                 .userSocialId(oAuth2UserInfo.getId())
                 .userNickname("닉네임"+UUID.randomUUID()) //닉네임 랜덤 생성
                 .userLevel(1)
-                .userRole(Role.GUEST)
+                .userRole(Role.USER)
                 .build();
     }
 

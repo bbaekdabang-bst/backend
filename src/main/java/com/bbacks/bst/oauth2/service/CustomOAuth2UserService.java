@@ -61,7 +61,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         //CustomOAuth2User 객체 생성하여 반환
         return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getKey())),
-                attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserRole()
+                attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserRole(), createdUser.getUserPlatform()
         );
     }
 
