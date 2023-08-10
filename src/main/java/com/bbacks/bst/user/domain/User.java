@@ -2,25 +2,30 @@ package com.bbacks.bst.user.domain;
 
 //import com.bbacks.bst.books.domain.Review;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
 @Getter
 @Builder
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "user")
 public class User {
 
     @Id @GeneratedValue
     @Column(name = "u_id")
-    private Long userId;
+    private Integer userId;
 
     @Column(name = "u_nickname", unique = true, length = 20)
     private String userNickname;
 
     @Column(name = "u_platform")
+    @Enumerated(EnumType.STRING)
     private PlatformType userPlatform; //Naver, Kakao
 
     @Column(name = "u_social_id")

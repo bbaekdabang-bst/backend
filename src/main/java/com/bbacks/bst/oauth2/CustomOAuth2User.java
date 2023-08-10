@@ -17,11 +17,11 @@ public class CustomOAuth2User extends DefaultOAuth2User {
     private PlatformType platformType;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
-                            Map<String, Object> attributes, String nameAttributeKey, Role role, PlatformType platformTyoe) {
+                            Map<String, Object> attributes, String nameAttributeKey, Role role, PlatformType platformType) {
         super(authorities, attributes, nameAttributeKey);
-        //this.email = email;
         this.role = role;
-        this.platformType = platformTyoe;
+        this.platformType = platformType;
     }
+
 
 }

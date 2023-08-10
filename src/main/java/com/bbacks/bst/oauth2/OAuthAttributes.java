@@ -59,7 +59,7 @@ public class OAuthAttributes {
         return User.builder()
                 .userPlatform(platformType)
                 .userSocialId(oAuth2UserInfo.getId())
-                .userNickname("닉네임"+UUID.randomUUID()) //닉네임 랜덤 생성
+                .userNickname("닉네임"+UUID.randomUUID().toString().substring(0,5)) //닉네임 랜덤 생성
                 .userLevel(1)
                 .userRole(Role.USER)
                 .build();

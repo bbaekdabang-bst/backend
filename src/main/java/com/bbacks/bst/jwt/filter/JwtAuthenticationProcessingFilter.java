@@ -1,6 +1,5 @@
 package com.bbacks.bst.jwt.filter;
 
-import com.bbacks.bst.security.CustomUserDetails;
 import com.bbacks.bst.jwt.service.JwtService;
 import com.bbacks.bst.user.domain.PlatformType;
 import com.bbacks.bst.user.domain.User;
