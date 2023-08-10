@@ -1,6 +1,6 @@
 package com.bbacks.bst.user.domain;
 
-import com.bbacks.bst.books.domain.Review;
+//import com.bbacks.bst.books.domain.Review;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -38,10 +38,11 @@ public class User {
     @Column(name = "u_role")
     private Role userRole;
 
+    /*
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     private List<Review> reviews;
-
+*/
     public void updateRefreshToken(String userToken) {
         this.userToken = userToken;
     }

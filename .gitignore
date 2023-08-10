@@ -37,5 +37,5 @@ out/
 .vscode/
 
 application.properties
-application-oauth.properties
-application-jwt.properties
+./src/main/resources/application-oauth.properties
+./src/main//resources/application-jwt.properties
