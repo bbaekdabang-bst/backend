@@ -13,16 +13,18 @@ public class PostDto {
     private String userNickname;
     private String userPhoto;
     private String content;
-    private int like;
-    private int dislike;
+    private Long quotedPostId;
+    private Integer like;
+    private Integer dislike;
     private Integer isPro;
 
     @Builder
-    public PostDto(Date date, String userNickname, String userPhoto, String content, int like, int dislike, Integer isPro) {
+    public PostDto(Date date, String userNickname, String userPhoto, String content, Long quotedPostId, Integer like, Integer dislike, Integer isPro) {
         this.date = date;
         this.userNickname = userNickname;
         this.userPhoto = userPhoto;
         this.content = content;
+        this.quotedPostId = quotedPostId;
         this.like = like;
         this.dislike = dislike;
         this.isPro = isPro;

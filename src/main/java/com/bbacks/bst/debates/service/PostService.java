@@ -9,6 +9,7 @@ import com.bbacks.bst.debates.repository.PostRepository;
 import com.bbacks.bst.user.domain.User;
 import com.bbacks.bst.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,10 +23,11 @@ public class PostService {
     private final PostRepository postRepository;
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // 글 작성
     @Transactional
-    public Long createPost(CreatePostRequest createPostRequest) {
+    public void createPost(CreatePostRequest createPostRequest) {
         Debate debate = debateRepository.findById(createPostRequest.getDebateId()).get();
         User user = userRepository.findById(createPostRequest.getUserId()).get();
 
@@ -39,8 +41,6 @@ public class PostService {
                 .build();
 
         postRepository.save(post);
-
-        return post.getPostId();
     }
 
     // 글 상세 페이지
@@ -71,8 +71,9 @@ public class PostService {
                 .userNickname(user.getUserNickname())
                 .userPhoto(user.getUserPhoto())
                 .content(post.getPostContent())
-                .like(post.getPostLike())
-                .dislike(post.getPostDislike())
+                .quotedPostId(post.getPostQuotationId())
+                .like(getLikeCount(postId))
+                .dislike(getDislikeCount(postId))
                 .isPro(post.getPostIsPro())
                 .build();
 
@@ -102,4 +103,60 @@ public class PostService {
 
         return postId;
     }
+
+    // 글 좋아요
+    @Transactional
+    public boolean likePost(Long userId, Long postId) {
+        String likeKey = "post: " + postId + ":likes";
+        String userKey = "user: " + userId + ":liked";
+
+        if (!redisTemplate.opsForSet().isMember(userKey, String.valueOf(postId))) {
+            redisTemplate.opsForValue().increment(likeKey);
+            redisTemplate.opsForSet().add(userKey, String.valueOf(postId));
+            return true;
+        } else{
+            redisTemplate.opsForValue().decrement(likeKey);
+            redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
+            return false;
+        }
+    }
+
+    // 글 싫어요
+    public boolean dislikePost(Long userId, Long postId) {
+        String dislikeKey = "post: " + postId + ":dislikes";
+        String userKey = "user: " + userId + ":disliked";
+
+        if (!redisTemplate.opsForSet().isMember(userKey, String.valueOf(postId))) {
+            redisTemplate.opsForValue().increment(dislikeKey);
+            redisTemplate.opsForSet().add(userKey, String.valueOf(postId));
+            return true;
+        } else {
+            redisTemplate.opsForValue().decrement(dislikeKey);
+            redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
+            return false;
+        }
+    }
+
+    public Integer getLikeCount(Long postId) {
+        String likeKey = "post: " + postId + ":likes";
+        Object likeCount = redisTemplate.opsForValue().get(likeKey);
+
+        if(likeCount != null) {
+            return Integer.parseInt(likeCount.toString());
+        } else {
+            return 0;
+        }
+    }
+
+    public Integer getDislikeCount(Long postId) {
+        String dislikeKey = "post: " + postId + ":dislikes";
+        Object dislikeCount = redisTemplate.opsForValue().get(dislikeKey);
+
+        if(dislikeCount != null) {
+            return Integer.parseInt(dislikeCount.toString());
+        } else {
+            return 0;
+        }
+    }
+
 }

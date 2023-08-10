@@ -35,24 +35,12 @@ public class Post {
     @Column(name = "quotation_id")
     private Long postQuotationId;
 
-    @Column(name = "p_like")
-    private Integer postLike = 0;
-
-    @Column(name = "p_dislike")
-    private Integer postDislike = 0;
-
     @Column(name = "is_pro")
     private Integer postIsPro;
 
     @CreationTimestamp
     @Column(name = "created_date")
     private Date postCreatedAt;
-
-    @PrePersist
-    public void prePersist() {
-        this.postLike = this.postLike == null ? 0 : this.postLike;
-        this.postDislike = this.postDislike == null ? 0 : this.postDislike;
-    }
 
     @Builder
     public Post(Debate debate, User user, String postContent, String postPhoto, Long postQuotationId, Integer postIsPro) {

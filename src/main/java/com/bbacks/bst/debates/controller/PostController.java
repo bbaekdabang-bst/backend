@@ -41,4 +41,35 @@ public class PostController {
         return ApiResponseDto.success(SuccessStatus.DELETE_POST_SUCCESS);
     }
 
+    // 글 좋아요
+    @PostMapping("/debate/post/{post-id}/like")
+    public String likePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+        boolean liked = postService.likePost(userId, postId);
+        if (liked) {
+            return "Liked";
+        } else {
+            return "Cancel liked";
+        }
+    }
+
+    @PostMapping("/debate/post/{post-id}/dislike")
+    public String dislikePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+        boolean disliked = postService.dislikePost(userId, postId);
+        if (disliked) {
+            return "disLiked";
+        } else {
+            return "Cancel disliked";
+        }
+    }
+
+    @GetMapping("/debate/getLike/{post-id}")
+    public Integer getLikeCount(@PathVariable("post-id") Long postId) {
+        return postService.getLikeCount(postId);
+    }
+
+    @GetMapping("/debate/getDislike/{post-id}")
+    public Integer getDislikeCount(@PathVariable("post-id") Long postId) {
+        return postService.getDislikeCount(postId);
+    }
+
 }

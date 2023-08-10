@@ -2,18 +2,15 @@ package com.bbacks.bst.debates.controller;
 
 import com.bbacks.bst.common.response.ApiResponseDto;
 import com.bbacks.bst.common.response.SuccessStatus;
-import com.bbacks.bst.debates.domain.Post;
 import com.bbacks.bst.debates.dto.CreateDebateRequest;
 import com.bbacks.bst.debates.dto.DebateOutlineResponse;
 import com.bbacks.bst.debates.dto.MyDebateResponse;
 import com.bbacks.bst.debates.dto.PostDto;
 import com.bbacks.bst.debates.service.DebateService;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.prefs.AbstractPreferences;
 
 @RestController
 @RequiredArgsConstructor
