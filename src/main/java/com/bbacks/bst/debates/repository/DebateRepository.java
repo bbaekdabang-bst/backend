@@ -1,5 +1,6 @@
 package com.bbacks.bst.debates.repository;
 
+import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.debates.domain.Debate;
 import com.bbacks.bst.debates.dto.PostDto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +19,5 @@ public interface DebateRepository extends JpaRepository<Debate, Long> {
 
     List<Debate> findTop10ByOrderByDebateParticipants();
     List<Debate> findTop10ByOrderByDebateCreatedAtDesc();
-
+    List<Debate> findByBookId(Book book);
 }
