@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .and()
 
                 .authorizeHttpRequests()
-                .requestMatchers("/", "/healthcheck", "/error", "/favicon.ico", "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js")
+                .requestMatchers("/", "/healthcheck", "/error", "/favicon.ico", "/**.png", "/**.jpg", "/**.html", "/**.css", "/**.js")
                 .permitAll()
                 .requestMatchers("/user/**", "/oauth2/**", "/auth/**")
                 .permitAll()
