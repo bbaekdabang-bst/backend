@@ -41,7 +41,7 @@ public class Debate {
 
     @CreationTimestamp
     @Column(name = "deb_created_date")
-    private Date debateCreatedAt;
+    private Date ebateCreatedAt;
 
     @OneToMany(mappedBy = "debate", fetch = FetchType.LAZY)
     private List<Post> posts = new ArrayList<>();
