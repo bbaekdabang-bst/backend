@@ -24,6 +24,7 @@ public class ApiResponseDto<T> {
         return new ApiResponseDto<>(httpStatus.value(), message);
     }
 
+
     public static <T> ApiResponseDto<T> error(HttpStatus httpStatus, String message, T data) {
         return new ApiResponseDto<T>(httpStatus.value(), message, data);
     }

@@ -57,3 +57,4 @@ public enum ErrorStatus {
     private final String message;
 
 }
+
