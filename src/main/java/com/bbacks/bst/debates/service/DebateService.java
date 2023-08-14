@@ -32,6 +32,7 @@ public class DebateService {
     private final TempBookRepository tempBookRepository;
     private final DebateRepository debateRepository;
     private final PostRepository postRepository;
+    private final PostService postService;
 
     // 내가 참여한 토론방
     public List<MyDebateResponse> myDebate(Long userId) {
@@ -126,8 +127,8 @@ public class DebateService {
                         .userNickname(user.getUserNickname())
                         .userPhoto(user.getUserPhoto())
                         .content(p.getPostContent())
-                        .like(p.getPostLike())
-                        .dislike(p.getPostDislike())
+                        .like(postService.getLikeCount(p.getPostId()))
+                        .dislike(postService.getDislikeCount(p.getPostId()))
                         .isPro(p.getPostIsPro())
                         .build();
 

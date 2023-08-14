@@ -52,6 +52,7 @@ public class PostController {
         }
     }
 
+    // 글 싫어요
     @PostMapping("/debate/post/{post-id}/dislike")
     public String dislikePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
         boolean disliked = postService.dislikePost(userId, postId);
@@ -59,6 +60,17 @@ public class PostController {
             return "disLiked";
         } else {
             return "Cancel disliked";
+        }
+    }
+
+    // 글 북마크
+    @PostMapping("/debate/post/{post-id}/bookmark")
+    public String bookmarkPost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+        boolean bookmark = postService.bookmark(userId, postId);
+        if(bookmark) {
+            return "bookmark post";
+        } else {
+            return "cancel bookmark";
         }
     }
 

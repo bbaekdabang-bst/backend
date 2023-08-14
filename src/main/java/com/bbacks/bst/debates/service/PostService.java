@@ -3,11 +3,14 @@ package com.bbacks.bst.debates.service;
 import com.bbacks.bst.books.domain.Book;
 import com.bbacks.bst.debates.domain.Debate;
 import com.bbacks.bst.debates.domain.Post;
+import com.bbacks.bst.debates.domain.PostBookmark;
 import com.bbacks.bst.debates.dto.*;
 import com.bbacks.bst.debates.repository.DebateRepository;
+import com.bbacks.bst.debates.repository.PostBookmarkRepository;
 import com.bbacks.bst.debates.repository.PostRepository;
 import com.bbacks.bst.user.domain.User;
 import com.bbacks.bst.user.repository.UserRepository;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class PostService {
     private final PostRepository postRepository;
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
+    private final PostBookmarkRepository postBookmarkRepository;
     private final RedisTemplate<String, Object> redisTemplate;
 
     // 글 작성
@@ -135,6 +139,32 @@ public class PostService {
             redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
             return false;
         }
+    }
+
+    // 토론글 북마크
+    public boolean bookmark(Long userId, Long postId) {
+        User user = userRepository.findById(userId).get();
+        Post post = postRepository.findById(postId).get();
+
+        if(!postBookmarkRepository.existsByUserAndPost(user, post)){
+            PostBookmark postBookmark = PostBookmark.builder()
+                    .user(user)
+                    .post(post)
+                    .build();
+            postBookmarkRepository.save(postBookmark);
+            return true;
+        } else {
+            deleteBookmark(userId, postId);
+            return false;
+        }
+    }
+
+    // 북마크 삭제
+    public void deleteBookmark(Long userId, Long postId) {
+        User user = userRepository.findById(userId).get();
+        Post post = postRepository.findById(postId).get();
+
+        postBookmarkRepository.deleteByUserAndPost(user, post);
     }
 
     public Integer getLikeCount(Long postId) {
