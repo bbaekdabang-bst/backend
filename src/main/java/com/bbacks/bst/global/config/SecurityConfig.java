@@ -1,11 +1,11 @@
 package com.bbacks.bst.global.config;
 
-import com.bbacks.bst.jwt.filter.JwtAuthenticationProcessingFilter;
-import com.bbacks.bst.jwt.service.JwtService;
-import com.bbacks.bst.oauth2.handler.OAuth2LoginFailureHandler;
-import com.bbacks.bst.oauth2.handler.OAuth2LoginSuccessHandler;
-import com.bbacks.bst.oauth2.service.CustomOAuth2UserService;
-import com.bbacks.bst.user.repository.UserRepository;
+import com.bbacks.bst.domain.jwt.filter.JwtAuthenticationProcessingFilter;
+import com.bbacks.bst.domain.jwt.service.JwtService;
+import com.bbacks.bst.domain.oauth2.handler.OAuth2LoginFailureHandler;
+import com.bbacks.bst.domain.oauth2.handler.OAuth2LoginSuccessHandler;
+import com.bbacks.bst.domain.oauth2.service.CustomOAuth2UserService;
+import com.bbacks.bst.domain.user.repository.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
