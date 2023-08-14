@@ -54,6 +54,8 @@ public class Review {
     @OrderBy("commentId DESC")
     private List<ReviewComment> reviewComment = new ArrayList<>();
 
+
+
     public void setReviewImg(String filePath) {
         this.reviewImg = filePath;
     }

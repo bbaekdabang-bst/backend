@@ -28,7 +28,7 @@ public class GlobalExceptionController {
             MethodArgumentNotValidException.class,
             ConstraintViolationException.class})
     protected ApiResponseDto handleMethodArgumentNotValidException(Exception e){
-        log.warn("MethodArgumentNotValid", e);
+//        log.warn("MethodArgumentNotValid", e);
         return ApiResponseDto.error(HttpStatus.BAD_REQUEST, "Input Validation Error");
 //        return ApiResponseDto.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
@@ -40,7 +40,7 @@ public class GlobalExceptionController {
             MaxUploadSizeExceededException.class
     })
     protected ApiResponseDto handleBadRequestException(Exception e) {
-        log.warn("BAD_REQUEST", e);
+//        log.warn("BAD_REQUEST", e);
         return ApiResponseDto.error(HttpStatus.BAD_REQUEST, e.getMessage());
     }
 
@@ -52,14 +52,14 @@ public class GlobalExceptionController {
             RefreshTokenException.class,
     })
     public ApiResponseDto handleUnauthorizedException(Exception e) {
-        log.warn("UNAUTHORIZED", e);
+//        log.warn("UNAUTHORIZED", e);
         return ApiResponseDto.error(HttpStatus.UNAUTHORIZED, e.getMessage());
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(PostNotFoundException.class)
     protected ApiResponseDto handleNotFoundException(PostNotFoundException e) {
-        log.warn("NOT_FOUND", e);
+//        log.warn("NOT_FOUND", e);
         return ApiResponseDto.error(HttpStatus.NOT_FOUND, e.getMessage());
     }
 
@@ -68,14 +68,15 @@ public class GlobalExceptionController {
             ConflictRequestException.class,
     })
     protected ApiResponseDto handleConflictRequestException(ConflictRequestException e) {
-        log.warn("CONFLICT", e);
+//        log.warn("CONFLICT", e);
         return ApiResponseDto.error(HttpStatus.CONFLICT, e.getMessage());
     }
+
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     protected ApiResponseDto handleException(Exception e) {
-        log.error("INTERNAL_SERVER_ERROR", e);
+//        log.error("INTERNAL_SERVER_ERROR", e);
         return ApiResponseDto.error(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 

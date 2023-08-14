@@ -1,5 +1,6 @@
 package com.bbacks.bst.common.utils;
 
+import com.bbacks.bst.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
@@ -36,22 +37,27 @@ public class JwtService {
                     .parseClaimsJws(token).getBody().getExpiration().before(new Date(System.currentTimeMillis()));
         } catch (SignatureException ex) {
             log.error("잘못된 JWT 서명입니다.");
+            throw ex;
         } catch (MalformedJwtException ex) {
             log.error("잘못된 JWT 서명입니다.");
+            throw ex;
         } catch (ExpiredJwtException ex) {
             log.error("만료된 JWT 토큰입니다.");
+            throw ex;
         } catch (UnsupportedJwtException ex) {
             log.error("지원되지 않는 JWT 토큰입니다.");
+            throw ex;
         } catch (IllegalArgumentException ex) {
             log.error("JWT 토큰이 잘못되었습니다.");
+            throw ex;
         }
-        return false;
     }
 
     public static Long getUserId(String secretKey, String token) {
         return Jwts.parserBuilder().setSigningKey(Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8))).build()
                 .parseClaimsJws(token).getBody().get("userId", Long.class);
     }
+
 
 
 
