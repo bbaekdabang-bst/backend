@@ -30,7 +30,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserPageReviewResponse> getMyPageReview(Long userId){
+    public List<UserPageReviewResponse> getMyPageReview(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(UserIdNotFoundException::new);
         List<Review> reviews = user.getReviews();
@@ -68,6 +68,5 @@ public class UserService {
                 .bookId(review.getBook().getBookId())
                 .build();
     }
-
 
 }

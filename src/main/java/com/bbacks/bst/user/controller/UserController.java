@@ -15,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@Slf4j
+
+/**
 @RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/mypage")
 public class UserController {
 
     private final UserService userService;
@@ -49,4 +50,6 @@ public class UserController {
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewResponses);
     }
 
+
 }
+**/

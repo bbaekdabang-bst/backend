@@ -40,3 +40,5 @@ out/
 application.properties
 
 src/main/generated/
+src/main/resources/application-oauth.properties
+src/main/resources/application-jwt.properties
