@@ -43,45 +43,37 @@ public class PostController {
 
     // 글 좋아요
     @PostMapping("/debate/post/{post-id}/like")
-    public String likePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> likePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
         boolean liked = postService.likePost(userId, postId);
+
+        String result = null;
         if (liked) {
-            return "Liked";
+             return ApiResponseDto.success(SuccessStatus.LIKE_POST_SUCCESS);
         } else {
-            return "Cancel liked";
+            return ApiResponseDto.success(SuccessStatus.UNLIKE_POST_SUCCESS);
         }
     }
 
     // 글 싫어요
     @PostMapping("/debate/post/{post-id}/dislike")
-    public String dislikePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> dislikePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
         boolean disliked = postService.dislikePost(userId, postId);
         if (disliked) {
-            return "disLiked";
+            return ApiResponseDto.success(SuccessStatus.DISLIKE_POST_SUCCESS);
         } else {
-            return "Cancel disliked";
+            return ApiResponseDto.success(SuccessStatus.UNDISLIKE_POST_SUCCESS);
         }
     }
 
     // 글 북마크
     @PostMapping("/debate/post/{post-id}/bookmark")
-    public String bookmarkPost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> bookmarkPost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
         boolean bookmark = postService.bookmark(userId, postId);
         if(bookmark) {
-            return "bookmark post";
+            return ApiResponseDto.success(SuccessStatus.BOOKMARK_SAVE_SUCCESS);
         } else {
-            return "cancel bookmark";
+            return ApiResponseDto.success(SuccessStatus.BOOKMARK_DELETE_SUCCESS);
         }
-    }
-
-    @GetMapping("/debate/getLike/{post-id}")
-    public Integer getLikeCount(@PathVariable("post-id") Long postId) {
-        return postService.getLikeCount(postId);
-    }
-
-    @GetMapping("/debate/getDislike/{post-id}")
-    public Integer getDislikeCount(@PathVariable("post-id") Long postId) {
-        return postService.getDislikeCount(postId);
     }
 
 }

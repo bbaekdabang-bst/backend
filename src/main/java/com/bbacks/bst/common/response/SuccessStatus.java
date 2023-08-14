@@ -17,7 +17,12 @@ public enum SuccessStatus {
     DEBATE_POST_SUCCESS(HttpStatus.OK, "글 작성에 성공했습니다."),
     DELETE_POST_SUCCESS(HttpStatus.OK, "글이 삭제되었습니다."),
     CREATE_DEBATE_SUCCESS(HttpStatus.OK, "토론이 개설되었습니다."),
-    JOIN_DEBATE_SUCCESS(HttpStatus.OK, "토론 참여에 성공했습니다.");
+    JOIN_DEBATE_SUCCESS(HttpStatus.OK, "토론 참여에 성공했습니다."),
+    LIKE_POST_SUCCESS(HttpStatus.OK, "좋아요에 성공하였습니다."),
+    UNLIKE_POST_SUCCESS(HttpStatus.OK, "좋아요를 취소하였습니다."),
+    DISLIKE_POST_SUCCESS(HttpStatus.OK, "싫어요에 성공하였습니다."),
+    UNDISLIKE_POST_SUCCESS(HttpStatus.OK, "싫어요를 취소하였습니다.");
+
 
 
     private final HttpStatus httpStatus;

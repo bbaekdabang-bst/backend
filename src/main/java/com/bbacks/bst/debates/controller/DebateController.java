@@ -52,9 +52,9 @@ public class DebateController {
 
     // 토론방 피드
     @GetMapping("/debate/feed/{deb-id}")
-    public List<PostDto> debateFeed (@PathVariable("deb-id") Long debateId) {
+    public ApiResponseDto<?> debateFeed (@PathVariable("deb-id") Long debateId) {
         List<PostDto> posts = debateService.debateFeed(debateId);
 
-        return posts;
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, posts);
     }
 }
