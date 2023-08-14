@@ -41,6 +41,7 @@ public class User {
     private Integer userLevel;
 
     @Column(name = "u_role")
+    @Enumerated(EnumType.STRING)
     private Role userRole;
 
     /*

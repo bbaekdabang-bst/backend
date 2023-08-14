@@ -36,10 +36,14 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
             String refreshToken = jwtService.createRefreshToken();
             response.addHeader(jwtService.getAccessHeader(), "Bearer " + accessToken);
             response.addHeader(jwtService.getRefreshHeader(), "Bearer " + refreshToken);
+            log.info("AccessToken: " + accessToken);
+            log.info("RefreshToken: " + refreshToken);
+            log.info("Token 생성 완료!");
 
             //token 전송 & DB에 refreshToken 저장
             jwtService.sendAccessAndRefreshToken(response, accessToken, refreshToken);
             jwtService.updateRefreshToken(userSocialId, userPlatform.toString(), refreshToken);
+            log.info("Token 전송 및 저장 완료!");
 
             } catch (Exception e) {
             throw e;
