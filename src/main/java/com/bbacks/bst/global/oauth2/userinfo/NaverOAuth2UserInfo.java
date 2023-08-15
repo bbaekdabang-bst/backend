@@ -1,4 +1,4 @@
-package com.bbacks.bst.domain.oauth2.userinfo;
+package com.bbacks.bst.global.oauth2.userinfo;
 
 import java.util.Map;
 

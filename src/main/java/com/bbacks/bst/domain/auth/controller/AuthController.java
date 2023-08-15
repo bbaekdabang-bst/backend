@@ -1,4 +1,3 @@
-/*
 package com.bbacks.bst.domain.auth.controller;
 
 
@@ -21,24 +20,20 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @PostMapping("/login")
-    public ApiResponseDto<?> login() {
-        */
-/**
-         * 회원가입하려고 가져온 사용자 정보를 토대로 토큰 발급
-         * DB에 없는 사람 가지고 토큰 만들면 안 됨
-         *//*
-
-        Long userId = 1L;
-
-        TokenResponse tokenResponse = authService.login(userId);
-        return ApiResponseDto.success(SuccessStatus.LOGIN_SUCCESS, tokenResponse);
-        */
-/**
-         * refresh token도 클라이언트에 저장. httpOnly를 사용해서
-         *//*
-
-    }
+//    @PostMapping("/login")
+//    public ApiResponseDto<?> login() {
+//        /**
+//         * 회원가입하려고 가져온 사용자 정보를 토대로 토큰 발급
+//         * DB에 없는 사람 가지고 토큰 만들면 안 됨
+//         */
+//        Long userId = 1L;
+//
+//        TokenResponse tokenResponse = authService.login(userId);
+//        return ApiResponseDto.success(SuccessStatus.LOGIN_SUCCESS, tokenResponse);
+//        /**
+//         * refresh token도 클라이언트에 저장. httpOnly를 사용해서
+//         */
+//    }
 
     @PostMapping("/refresh")
     public ApiResponseDto<?> refreshToken(@RequestBody @Valid RefreshRequest request){
@@ -49,4 +44,3 @@ public class AuthController {
         return ApiResponseDto.success(SuccessStatus.POST_SUCCESS, accessTokenResponse);
     }
 }
-*/

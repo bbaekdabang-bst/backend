@@ -1,4 +1,4 @@
-package com.bbacks.bst.domain.oauth2.handler;
+package com.bbacks.bst.global.oauth2.handler;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

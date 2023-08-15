@@ -1,7 +1,7 @@
-/*
-package com.bbacks.bst.global.utils;
+package com.bbacks.bst.global.jwt.filter;
 
 import com.bbacks.bst.domain.auth.service.AuthService;
+import com.bbacks.bst.global.jwt.service.JwtService;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -28,17 +28,17 @@ import java.util.List;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final AuthService authService;
-    private final String secretKey;
+    private final JwtService jwtService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = getJwtFromRequest(request);
-            if (StringUtils.hasText(token) && JwtService.validateToken(secretKey, token)) {
-                Long userId = JwtService.getUserId(secretKey, token);
+            if (StringUtils.hasText(token) && jwtService.validateToken(token)) {
+                String socialId = jwtService.getSocialId(token);
 
-                authService.checkUserIdInDB(userId);
+                Long userId = authService.checkSocialIdAndGetUserId(socialId);
 
                 // 권한 부여
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, List
@@ -77,7 +77,6 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         response.getWriter().write(result);
-        return;
     }
 }
-*/
+

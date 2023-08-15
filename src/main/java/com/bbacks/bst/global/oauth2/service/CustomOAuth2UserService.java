@@ -1,7 +1,7 @@
-package com.bbacks.bst.domain.oauth2.service;
+package com.bbacks.bst.global.oauth2.service;
 
-import com.bbacks.bst.domain.oauth2.CustomOAuth2User;
-import com.bbacks.bst.domain.oauth2.OAuthAttributes;
+import com.bbacks.bst.global.oauth2.CustomOAuth2User;
+import com.bbacks.bst.global.oauth2.OAuthAttributes;
 import com.bbacks.bst.domain.user.domain.PlatformType;
 import com.bbacks.bst.domain.user.domain.User;
 import com.bbacks.bst.domain.user.repository.UserRepository;
@@ -42,16 +42,17 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest);
 
-        /**
-         * userRequest에서 registrationId 추출 후 registrationId으로 SocialType 저장
-         * http://localhost:8080/oauth2/authorization/kakao에서 kakao가 registrationId
-         * userNameAttributeName은 이후에 nameAttributeKey로 설정된다.
-         **/
+
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
+
         PlatformType platformType = getPlatformType(registrationId);
         String userNameAttributeName = userRequest.getClientRegistration()
                 .getProviderDetails().getUserInfoEndpoint().getUserNameAttributeName(); //OAuth2 로그인 시 키(PK)가 되는 값
         Map<String, Object> attributes = oAuth2User.getAttributes(); //소셜 로그인 API가 제공하는 userInfo의 Json 값(유저 정보)
+
+        log.info("platformType:{}", platformType);
+        log.info("userNameAttributeName:{}", userNameAttributeName);
+        log.info("attributes:{}", attributes);
 
         //소셜 플랫폼 타입에 따라 OAuthAttributes 객체 생성
         OAuthAttributes extractAttributes = OAuthAttributes.of(platformType, userNameAttributeName, attributes);
@@ -61,7 +62,10 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         //CustomOAuth2User 객체 생성하여 반환
         return new CustomOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority(createdUser.getUserRole().getKey())),
-                attributes, extractAttributes.getNameAttributeKey(), createdUser.getUserRole(), createdUser.getUserPlatform()
+                attributes,
+                extractAttributes.getNameAttributeKey(),
+                createdUser.getUserRole(),
+                createdUser.getUserPlatform()
         );
     }
 
@@ -74,11 +78,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         return PlatformType.KAKAO;
     }
 
-    /**
-     * PlatformType과 attributes의 소셜로그인 id를 통해 회원을 찾아 반환하는 메소드
-     * 회원을 찾았으면 반환, 없다면 saveUser() 메소드 호출
-     **/
+
     private User getUser(OAuthAttributes attributes, PlatformType platformType){
+
         User findUser = userRepository.findByUserPlatformAndUserSocialId(platformType,
                 attributes.getOauth2UserInfo().getId()).orElse(null);
 

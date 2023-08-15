@@ -1,8 +1,8 @@
-package com.bbacks.bst.domain.oauth2;
+package com.bbacks.bst.global.oauth2;
 
-import com.bbacks.bst.domain.oauth2.userinfo.KakaoOAuth2UserInfo;
-import com.bbacks.bst.domain.oauth2.userinfo.NaverOAuth2UserInfo;
-import com.bbacks.bst.domain.oauth2.userinfo.OAuth2UserInfo;
+import com.bbacks.bst.global.oauth2.userinfo.KakaoOAuth2UserInfo;
+import com.bbacks.bst.global.oauth2.userinfo.NaverOAuth2UserInfo;
+import com.bbacks.bst.global.oauth2.userinfo.OAuth2UserInfo;
 import com.bbacks.bst.domain.user.domain.PlatformType;
 import com.bbacks.bst.domain.user.domain.Role;
 import com.bbacks.bst.domain.user.domain.User;
@@ -31,6 +31,7 @@ public class OAuthAttributes {
         if (platformType == PlatformType.NAVER) {
             return ofNaver(userNameAttributeName, attributes);
         }
+
         return ofKakao(userNameAttributeName, attributes);
     }
 

@@ -1,4 +1,4 @@
-package com.bbacks.bst.domain.oauth2;
+package com.bbacks.bst.global.oauth2;
 
 import com.bbacks.bst.domain.user.domain.PlatformType;
 import com.bbacks.bst.domain.user.domain.Role;
@@ -15,12 +15,17 @@ public class CustomOAuth2User extends DefaultOAuth2User {
     //private String email;
     private Role role;
     private PlatformType platformType;
+    private String userNameAttributeName;
 
     public CustomOAuth2User(Collection<? extends GrantedAuthority> authorities,
-                            Map<String, Object> attributes, String nameAttributeKey, Role role, PlatformType platformType) {
+                            Map<String, Object> attributes,
+                            String nameAttributeKey,
+                            Role role,
+                            PlatformType platformType) {
         super(authorities, attributes, nameAttributeKey);
         this.role = role;
         this.platformType = platformType;
+        this.userNameAttributeName = nameAttributeKey;
     }
 
 
