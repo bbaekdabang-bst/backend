@@ -30,9 +30,9 @@ public class PostService {
 
     // 글 작성
     @Transactional
-    public void createPost(CreatePostRequest createPostRequest) {
+    public void createPost(CreatePostRequest createPostRequest, Long userId) {
         Debate debate = debateRepository.findById(createPostRequest.getDebateId()).get();
-        User user = userRepository.findById(createPostRequest.getUserId()).get();
+        User user = userRepository.findById(userId).get();
 
         Post post = Post.builder()
                 .debate(debate)

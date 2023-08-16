@@ -8,6 +8,7 @@ import com.bbacks.bst.domain.debates.dto.MyDebateResponse;
 import com.bbacks.bst.domain.debates.dto.PostDto;
 import com.bbacks.bst.domain.debates.service.DebateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -18,9 +19,14 @@ public class DebateController {
 
     private final DebateService debateService;
 
+    private Long getUserId(Authentication authentication) {
+        return Long.parseLong(authentication.getName());
+    }
+
     // 내가 참여한 토론
     @GetMapping("/mydebate")
-    public ApiResponseDto<?> myDebate(@RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> myDebate(Authentication authentication) {
+        Long userId = getUserId(authentication);
         List<MyDebateResponse> myDebateResponses = debateService.myDebate(userId);
 
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, myDebateResponses);
@@ -44,7 +50,8 @@ public class DebateController {
 
     // 토론방 참여하기
     @PutMapping("/debate/{deb-id}/join")
-    public ApiResponseDto<?> join (@PathVariable("deb-id") Long debateId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> join (@PathVariable("deb-id") Long debateId, Authentication authentication) {
+        Long userId = getUserId(authentication);
         debateService.join(debateId, userId);
 
         return ApiResponseDto.success(SuccessStatus.JOIN_DEBATE_SUCCESS);
