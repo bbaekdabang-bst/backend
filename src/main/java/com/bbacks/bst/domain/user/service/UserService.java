@@ -1,5 +1,6 @@
 package com.bbacks.bst.domain.user.service;
 
+import com.bbacks.bst.domain.user.dto.UserInfo;
 import com.bbacks.bst.global.exception.UserIdNotFoundException;
 import com.bbacks.bst.domain.reviews.domain.Review;
 import com.bbacks.bst.domain.user.domain.User;
@@ -66,6 +67,34 @@ public class UserService {
                 .reviewId(review.getReviewId())
                 .bookImg(review.getBook().getBookImg())
                 .bookId(review.getBook().getBookId())
+                .build();
+    }
+
+    /**
+     * 유저 프로필 변경 (빈 문자열일 경우 update X)
+     * @param userId : api 호출하는 사용자 id
+     * @param userUpdateInfo : update할 프로필 객체
+     */
+    @Transactional
+    public UserInfo updateProfile(Long userId, UserInfo userUpdateInfo) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserIdNotFoundException::new);
+
+        String userNickname = userUpdateInfo.getUserNickname();
+        String userPhoto = userUpdateInfo.getUserPhoto();
+
+        if(!userPhoto.isEmpty()) {
+            user.updatePhoto(userPhoto);
+        }
+        if(!userNickname.isEmpty()) {
+            user.updateNickname(userNickname);
+        }
+
+        userRepository.save(user);
+
+        return UserInfo.builder()
+                .userNickname(userNickname)
+                .userPhoto(userPhoto)
                 .build();
     }
 

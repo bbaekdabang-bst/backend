@@ -1,6 +1,7 @@
 package com.bbacks.bst.domain.user.controller;
 
 
+import com.bbacks.bst.domain.user.dto.UserInfo;
 import com.bbacks.bst.domain.user.dto.UserPageResponse;
 import com.bbacks.bst.domain.user.dto.UserPageReviewListResponse;
 import com.bbacks.bst.domain.user.dto.UserPageReviewResponse;
@@ -9,9 +10,7 @@ import com.bbacks.bst.global.response.ApiResponseDto;
 import com.bbacks.bst.global.response.SuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -48,5 +47,12 @@ public class UserController {
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewResponses);
     }
 
+    // 프로필 변경
+    @PostMapping("/update")
+    public ApiResponseDto<?> updateUserInfo(Authentication authentication, @RequestBody UserInfo updateUserInfo) {
+        Long userId = getUserId(authentication);
+        UserInfo updateResponse = userService.updateProfile(userId, updateUserInfo);
+        return ApiResponseDto.success(SuccessStatus.UPDATE_POST_SUCCESS, updateResponse);
+    }
 
 }

@@ -21,7 +21,9 @@ public enum SuccessStatus {
     LIKE_POST_SUCCESS(HttpStatus.OK, "좋아요에 성공하였습니다."),
     UNLIKE_POST_SUCCESS(HttpStatus.OK, "좋아요를 취소하였습니다."),
     DISLIKE_POST_SUCCESS(HttpStatus.OK, "싫어요에 성공하였습니다."),
-    UNDISLIKE_POST_SUCCESS(HttpStatus.OK, "싫어요를 취소하였습니다.");
+    UNDISLIKE_POST_SUCCESS(HttpStatus.OK, "싫어요를 취소하였습니다."),
+    UPDATE_POST_SUCCESS(HttpStatus.OK, "프로필 업데이트를 성공하였습니다.");
+
 
 
 
