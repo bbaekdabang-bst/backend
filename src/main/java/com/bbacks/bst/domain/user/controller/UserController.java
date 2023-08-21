@@ -11,6 +11,7 @@ import com.bbacks.bst.global.response.SuccessStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -49,9 +50,9 @@ public class UserController {
 
     // 프로필 변경
     @PostMapping("/update")
-    public ApiResponseDto<?> updateUserInfo(Authentication authentication, @RequestBody UserInfo updateUserInfo) {
+    public ApiResponseDto<?> updateUserInfo(Authentication authentication, @RequestParam("userNickname") String userNickname, @RequestParam("userPhoto") MultipartFile file) {
         Long userId = getUserId(authentication);
-        UserInfo updateResponse = userService.updateProfile(userId, updateUserInfo);
+        UserInfo updateResponse = userService.updateProfile(userId, userNickname, file);
         return ApiResponseDto.success(SuccessStatus.UPDATE_POST_SUCCESS, updateResponse);
     }
 
