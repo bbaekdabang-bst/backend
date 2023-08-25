@@ -70,6 +70,7 @@ public class ReviewService {
                 .fetch();
     }
 
+
     @Transactional(readOnly = true)
     public ReviewDetailResponse getReviewDetail(Long reviewId){
         ReviewDetailResponse response =queryFactory

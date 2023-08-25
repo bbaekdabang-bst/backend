@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -47,6 +47,8 @@ public class UserController {
         List<UserPageReviewListResponse> reviewResponses = userService.getMyPageReviewList(userId);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewResponses);
     }
+
+    // 나의 북마크 가져오기 - 와이어프레임 완성 후 진행하기
 
 
 }
