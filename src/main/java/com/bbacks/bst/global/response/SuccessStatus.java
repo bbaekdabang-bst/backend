@@ -26,8 +26,6 @@ public enum SuccessStatus {
     UPDATE_POST_SUCCESS(HttpStatus.OK, "프로필 업데이트를 성공하였습니다.");
 
 
-
-
     private final HttpStatus httpStatus;
     private final String message;
 
