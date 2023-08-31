@@ -10,6 +10,7 @@ import com.bbacks.bst.domain.debates.repository.PostBookmarkRepository;
 import com.bbacks.bst.domain.debates.repository.PostRepository;
 import com.bbacks.bst.domain.user.repository.UserRepository;
 import com.bbacks.bst.domain.user.domain.User;
+import com.bbacks.bst.global.filtering.BadWordsFiltering;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -34,10 +35,14 @@ public class PostService {
         Debate debate = debateRepository.findById(createPostRequest.getDebateId()).get();
         User user = userRepository.findById(userId).get();
 
+        BadWordsFiltering badWordsFiltering = new BadWordsFiltering();
+        String text = createPostRequest.getPostContent();
+        String filteredContent = badWordsFiltering.change(text);
+
         Post post = Post.builder()
                 .debate(debate)
                 .user(user)
-                .postContent(createPostRequest.getPostContent())
+                .postContent(filteredContent)
                 .postPhoto(createPostRequest.getPostPhoto())
                 .postQuotationId(createPostRequest.getPostQuotationId())
                 .postIsPro(createPostRequest.getPostIsPro())

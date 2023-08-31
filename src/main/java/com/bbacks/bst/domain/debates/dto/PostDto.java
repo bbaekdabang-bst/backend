@@ -8,7 +8,7 @@ import java.util.Date;
 
 @Getter
 public class PostDto {
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    // @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
     private String userNickname;
     private String userPhoto;
