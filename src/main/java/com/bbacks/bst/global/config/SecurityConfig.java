@@ -27,13 +27,13 @@ public class SecurityConfig {
 
     private final AuthService authService;
     private final JwtService jwtService;
-    //private final UserRepository userRepository;
+    private final UserRepository userRepository;
     private final ObjectMapper objectMapper;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
-    //private final RedisTemplate redisTemplate;
+    private final RedisTemplate redisTemplate;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -70,7 +70,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtFilter jwtFilter(){
-        return new JwtFilter(authService, jwtService);
+        return new JwtFilter(authService, jwtService, userRepository, redisTemplate);
     }
 
 //    @Bean

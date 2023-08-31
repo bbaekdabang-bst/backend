@@ -36,9 +36,9 @@ public class JwtFilter extends OncePerRequestFilter {
     private final AuthService authService;
     private final JwtService jwtService;
     private ObjectMapper objectMapper = new ObjectMapper();
-/*
+
     private final UserRepository userRepository;
-    private final RedisTemplate redisTemplate;*/
+    private final RedisTemplate redisTemplate;
 
 
 
@@ -51,13 +51,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 Long userId = authService.checkSocialIdAndGetUserId(socialId);
 
-                /*//로그인된 유저가 맞는지 검증
+                //로그인된 유저가 맞는지 검증
                 User user = userRepository.findByUserSocialId(socialId)
                         .orElseThrow(UserIdNotFoundException::new);
                 String redisKey = user.getUserToken();
                 if(!redisTemplate.hasKey(redisKey) || redisTemplate.opsForValue().get(redisKey) == null) {
                     throw new UserNotFoundInRedisException();
-                }   */
+                }
 
                 // 권한 부여
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, List
