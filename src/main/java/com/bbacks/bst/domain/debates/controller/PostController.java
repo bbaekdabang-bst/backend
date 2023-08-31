@@ -5,6 +5,7 @@ import com.bbacks.bst.global.response.SuccessStatus;
 import com.bbacks.bst.domain.debates.dto.CreatePostRequest;
 import com.bbacks.bst.domain.debates.dto.ReadPostResponse;
 import com.bbacks.bst.domain.debates.service.PostService;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,11 +16,16 @@ public class PostController {
     public PostController(PostService postService) {
         this.postService = postService;
     }
+    private Long getUserId(Authentication authentication) {
+        return Long.parseLong(authentication.getName());
+    }
 
     // 글 작성
     @PostMapping("/debate/feed/{deb-id}/create")
-    public ApiResponseDto<?> createPost(@PathVariable("deb-id") Long debateId, @RequestBody CreatePostRequest createPostRequest) {
-        postService.createPost(createPostRequest);
+    public ApiResponseDto<?> createPost(@PathVariable("deb-id") Long debateId, @RequestBody CreatePostRequest createPostRequest,
+                                        Authentication authentication) {
+        Long userId = getUserId(authentication);
+        postService.createPost(createPostRequest, userId);
 
         return ApiResponseDto.success(SuccessStatus.DEBATE_POST_SUCCESS);
     }
@@ -42,7 +48,8 @@ public class PostController {
 
     // 글 좋아요
     @PostMapping("/debate/post/{post-id}/like")
-    public ApiResponseDto<?> likePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> likePost(@PathVariable("post-id") Long postId, Authentication authentication) {
+        Long userId = getUserId(authentication);
         boolean liked = postService.likePost(userId, postId);
 
         String result = null;
@@ -55,7 +62,8 @@ public class PostController {
 
     // 글 싫어요
     @PostMapping("/debate/post/{post-id}/dislike")
-    public ApiResponseDto<?> dislikePost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> dislikePost(@PathVariable("post-id") Long postId, Authentication authentication) {
+        Long userId = getUserId(authentication);
         boolean disliked = postService.dislikePost(userId, postId);
         if (disliked) {
             return ApiResponseDto.success(SuccessStatus.DISLIKE_POST_SUCCESS);
@@ -66,7 +74,8 @@ public class PostController {
 
     // 글 북마크
     @PostMapping("/debate/post/{post-id}/bookmark")
-    public ApiResponseDto<?> bookmarkPost(@PathVariable("post-id") Long postId, @RequestParam("user-id") Long userId) {
+    public ApiResponseDto<?> bookmarkPost(@PathVariable("post-id") Long postId, Authentication authentication) {
+        Long userId = getUserId(authentication);
         boolean bookmark = postService.bookmark(userId, postId);
         if(bookmark) {
             return ApiResponseDto.success(SuccessStatus.BOOKMARK_SAVE_SUCCESS);

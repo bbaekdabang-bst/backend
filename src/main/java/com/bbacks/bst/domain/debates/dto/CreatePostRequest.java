@@ -5,7 +5,6 @@ import lombok.Getter;
 @Getter
 public class CreatePostRequest {
     private Long debateId;
-    private Long userId;
     private String postContent;
     private String postPhoto;
     private Long postQuotationId;
