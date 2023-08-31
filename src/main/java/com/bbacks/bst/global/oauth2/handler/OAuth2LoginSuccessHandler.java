@@ -45,7 +45,8 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         log.info("RefreshToken: " + refreshToken);
         log.info("Token 생성 완료!");
 
-        String refreshKey = authService.saveRefreshTokenInRedis(refreshToken);
+        String refreshKey = authService.saveRefreshTokenInRedis(refreshToken); //Redis에 저장
+        authService.saveRefreshKey(refreshKey, userSocialId); //DB에 저장
         log.info("RefreshKey: " + refreshKey);
         log.info("Token 전송 및 저장 완료!");
 

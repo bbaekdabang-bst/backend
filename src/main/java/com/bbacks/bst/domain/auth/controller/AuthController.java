@@ -7,9 +7,11 @@ import com.bbacks.bst.domain.auth.dto.TokenResponse;
 import com.bbacks.bst.domain.auth.service.AuthService;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.bbacks.bst.global.response.SuccessStatus;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -41,6 +43,18 @@ public class AuthController {
         AccessTokenResponse accessTokenResponse = AccessTokenResponse.builder()
                 .accessToken(newAccessToken)
                 .build();
-        return ApiResponseDto.success(SuccessStatus.POST_SUCCESS, accessTokenResponse);
+        return ApiResponseDto.success(SuccessStatus.REFRESH_SUCCESS, accessTokenResponse);
+    }
+
+    @PostMapping("/logout")
+    public ApiResponseDto<?> logout(Authentication authentication){
+        Long userId = getUserId(authentication);
+        authService.logout(userId);
+        log.info("로그아웃됨");
+        return ApiResponseDto.success(SuccessStatus.LOGOUT_SUCCESS);
+    }
+
+    private Long getUserId(Authentication authentication){
+        return Long.parseLong(authentication.getName());
     }
 }
