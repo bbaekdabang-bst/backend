@@ -69,7 +69,7 @@ public class GlobalExceptionController {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     protected ApiResponseDto handleException(Exception e) {
-//        log.error("INTERNAL_SERVER_ERROR", e);
+        log.error("INTERNAL_SERVER_ERROR", e);
         return ApiResponseDto.error(HttpStatus.INTERNAL_SERVER_ERROR, "서버 에러가 발생했습니다. 잠시 후 다시 시도해주세요.");
     }
 
