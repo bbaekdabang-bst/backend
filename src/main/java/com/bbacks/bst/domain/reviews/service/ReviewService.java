@@ -11,6 +11,7 @@ import com.bbacks.bst.domain.books.repository.BookRepository;
 import com.bbacks.bst.domain.reviews.repository.ReviewBookmarkRepository;
 import com.bbacks.bst.domain.reviews.repository.ReviewCommentRepository;
 import com.bbacks.bst.domain.reviews.repository.ReviewRepository;
+import com.bbacks.bst.global.filtering.BadWordsFiltering;
 import com.bbacks.bst.global.utils.S3Service;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
@@ -129,10 +130,15 @@ public class ReviewService {
         User user = userRepository.getReferenceById(userId);
         Book book = bookRepository.getReferenceById(bookId);
 
+//        BadWordsFiltering badWordsFiltering = new BadWordsFiltering();
+//        String text = reviewRequest.getReviewContent();
+//        String filteredContent = badWordsFiltering.change(text);
+
         Review review = Review.builder()
                 .user(user)
                 .book(book)
                 .reviewTitle(reviewRequest.getReviewTitle())
+//                .reviewContent(filteredContent)
                 .reviewContent(reviewRequest.getReviewContent())
                 .reviewSpoiler(reviewRequest.getReviewSpoiler())
                 .reviewPrivate(reviewRequest.getReviewPrivate())
@@ -149,10 +155,14 @@ public class ReviewService {
         User user = userRepository.getReferenceById(userId);
         Review review = reviewRepository.getReferenceById(reviewId);
 
+        BadWordsFiltering badWordsFiltering = new BadWordsFiltering();
+        String text = commentRequest.getComment();
+        String filteredContent = badWordsFiltering.change(text);
+
         ReviewComment reviewComment = ReviewComment.builder()
                 .review(review)
                 .user(user)
-                .commentText(commentRequest.getComment())
+                .commentText(filteredContent)
                 .build();
 
         return commentRepository.save(reviewComment).getCommentId();

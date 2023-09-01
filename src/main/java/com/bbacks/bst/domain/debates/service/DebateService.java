@@ -50,6 +50,7 @@ public class DebateService {
                 MyDebateResponse myDebateResponse = MyDebateResponse.builder()
                         .bookTitle(book.getBookTitle())
                         .bookAuthor(book.getBookAuthor())
+                        .debateId(d.getDebateId())
                         .debateTopic(d.getDebateTopic())
                         .debateType(d.getDebateType())
                         .categoryName(category.getCategoryName())
