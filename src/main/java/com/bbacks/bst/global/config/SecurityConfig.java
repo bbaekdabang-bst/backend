@@ -45,7 +45,7 @@ public class SecurityConfig {
                 .headers(header -> header.frameOptions(frame -> frame.disable()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/**", "/oauth2/**", "/auth/**", "/api/v1/auth/refresh")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/user/**", "/oauth2/**", "/auth/**", "/api/v1/auth/refresh")
                             .permitAll()
                         .requestMatchers("/", "/favicon.ico", "/**.png", "/**.jpg", "/**.html", "/**.css", "/**.js")
                             .permitAll()

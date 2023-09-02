@@ -70,6 +70,7 @@ public class ReviewService {
                 .fetch();
     }
 
+
     @Transactional(readOnly = true)
     public ReviewDetailResponse getReviewDetail(Long reviewId){
         ReviewDetailResponse response =queryFactory
@@ -138,7 +139,9 @@ public class ReviewService {
                 .reviewPrivate(reviewRequest.getReviewPrivate())
                 .build();
 
-        fileUpload(review, file);
+        if(file != null && !file.isEmpty()){
+            fileUpload(review, file);
+        }
 
         return reviewRepository.save(review).getReviewId();
 
