@@ -51,4 +51,8 @@ public class User {
     public void updateRefreshToken(String userToken) {
         this.userToken = userToken;
     }
+
+    public void updateNickname(String userNickname){ this.userNickname = userNickname; }
+
+    public void updatePhoto(String userPhoto){ this.userPhoto = userPhoto; }
 }

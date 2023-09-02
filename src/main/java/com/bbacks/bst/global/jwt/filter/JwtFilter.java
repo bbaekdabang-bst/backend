@@ -1,6 +1,10 @@
 package com.bbacks.bst.global.jwt.filter;
 
 import com.bbacks.bst.domain.auth.service.AuthService;
+import com.bbacks.bst.domain.user.domain.User;
+import com.bbacks.bst.domain.user.repository.UserRepository;
+import com.bbacks.bst.global.exception.UserIdNotFoundException;
+import com.bbacks.bst.global.exception.UserNotFoundInRedisException;
 import com.bbacks.bst.global.jwt.service.JwtService;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,9 +13,11 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpHeaders;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -31,6 +37,11 @@ public class JwtFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private ObjectMapper objectMapper = new ObjectMapper();
 
+    private final UserRepository userRepository;
+    private final RedisTemplate redisTemplate;
+
+
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
@@ -39,6 +50,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 String socialId = jwtService.getSocialId(token);
 
                 Long userId = authService.checkSocialIdAndGetUserId(socialId);
+
+                //로그인된 유저가 맞는지 검증
+                User user = userRepository.findByUserSocialId(socialId)
+                        .orElseThrow(UserIdNotFoundException::new);
+                String redisKey = user.getUserToken();
+                if(!redisTemplate.hasKey(redisKey) || redisTemplate.opsForValue().get(redisKey) == null) {
+                    throw new UserNotFoundInRedisException();
+                }
 
                 // 권한 부여
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, null, List

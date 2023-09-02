@@ -19,6 +19,7 @@ public enum ErrorStatus {
     INVALID_DATE_EXCEPTION("날짜의 형태는 yyyy-mm-dd 형태여야합니다."),
     INVALID_TIME_EXCEPTION("시간의 형태는 HH:mm:00의 형태여야합니다."),
     NULL_ACCESS_TOKEN_EXCEPTION("토큰 값이 없습니다."),
+    NICKNAME_INDEX_OUT_OF_RANGE_EXCEPTION("닉네임 길이는 최대 20자 입니다."),
 
     /**
      * 401 UNAUTHORIZED

@@ -1,5 +1,7 @@
 package com.bbacks.bst.domain.user.service;
 
+import com.bbacks.bst.domain.user.dto.UserInfo;
+import com.bbacks.bst.global.exception.NicknameOutOfRangeException;
 import com.bbacks.bst.global.exception.UserIdNotFoundException;
 import com.bbacks.bst.domain.reviews.domain.Review;
 import com.bbacks.bst.domain.user.domain.User;
@@ -7,10 +9,13 @@ import com.bbacks.bst.domain.user.dto.UserPageResponse;
 import com.bbacks.bst.domain.user.dto.UserPageReviewListResponse;
 import com.bbacks.bst.domain.user.dto.UserPageReviewResponse;
 import com.bbacks.bst.domain.user.repository.UserRepository;
+import com.bbacks.bst.global.utils.S3Service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +26,7 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final S3Service s3Service;
 
     @Transactional(readOnly = true)
     public UserPageResponse getMyPage(Long userId) {
@@ -66,6 +72,45 @@ public class UserService {
                 .reviewId(review.getReviewId())
                 .bookImg(review.getBook().getBookImg())
                 .bookId(review.getBook().getBookId())
+                .build();
+    }
+
+    /**
+     * 유저 프로필 변경 (빈 문자열일 경우 update X)
+     * @param userId : api 호출하는 사용자 id
+     * @param userNickname : 새 닉네임
+     * @param file : 프로필 사진 파일
+     */
+    @Transactional
+    public UserInfo updateProfile(Long userId, String userNickname, MultipartFile file) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserIdNotFoundException::new);
+
+        if(userNickname.length() > 20) { //닉네임 글자 수 제한
+            throw new NicknameOutOfRangeException();
+        }
+
+        String imageLink = user.getUserPhoto(); //현재 프로필 사진 url
+
+        if(!file.isEmpty()) {
+            if(!imageLink.isEmpty()){
+                s3Service.deleteS3Object(imageLink); //기존 사진 s3에서 삭제
+                log.info("기존 프로필 사진 삭제 완료!");
+            }
+            imageLink = s3Service.uploadFile(file); //새 사진 s3에 업로드
+            user.updatePhoto(imageLink); //user 객체에 새 s3 링크 저장
+            log.info("새 프로필 사진 업로드 완료!");
+        }
+        if(!userNickname.isEmpty()) {
+            user.updateNickname(userNickname);
+            log.info("닉네임 수정 완료!");
+        }
+
+        userRepository.save(user);
+
+        return UserInfo.builder()
+                .userNickname(user.getUserNickname())
+                .userPhoto(imageLink)
                 .build();
     }
 
