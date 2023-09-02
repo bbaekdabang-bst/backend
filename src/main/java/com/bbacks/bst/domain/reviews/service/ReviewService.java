@@ -139,7 +139,9 @@ public class ReviewService {
                 .reviewPrivate(reviewRequest.getReviewPrivate())
                 .build();
 
-        fileUpload(review, file);
+        if(file != null && !file.isEmpty()){
+            fileUpload(review, file);
+        }
 
         return reviewRepository.save(review).getReviewId();
 
