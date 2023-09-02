@@ -7,6 +7,7 @@ import com.bbacks.bst.domain.home.dto.HomeResponse;
 import com.bbacks.bst.domain.home.service.HomeService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -48,5 +49,12 @@ public class HomeController {
 
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, newDebates);
     }
+
+    // 카테고리별 토론방
+    @GetMapping("/main/category/{category-id}")
+    public ApiResponseDto<?> categoryDebate(@PathVariable("category-id") Long categoryId) {
+        List<MyDebateResponse> categoryDebates = homeService.categoryDebates(categoryId);
+
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, categoryDebates);    }
 
 }

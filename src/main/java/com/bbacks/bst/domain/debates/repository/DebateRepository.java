@@ -16,7 +16,7 @@ public interface DebateRepository extends JpaRepository<Debate, Long> {
     @Query(value = "UPDATE Debate d SET d.debateParticipants = d.debateParticipants + 1 WHERE d.debateId = :debateId")
     int incrementCountByDebateId(@Param("debateId") Long debateId);
 
-    List<Debate> findTop10ByOrderByDebateParticipants();
+    List<Debate> findTop10ByOrderByDebateParticipantsDesc();
     List<Debate> findTop10ByOrderByDebateCreatedAtDesc();
     List<Debate> findByBook(Book book);
 }
