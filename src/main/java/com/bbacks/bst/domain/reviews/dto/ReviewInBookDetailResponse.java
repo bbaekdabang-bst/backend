@@ -13,13 +13,14 @@ public class ReviewInBookDetailResponse {
     private String reviewContent;
     private Long reviewId;
     private String reviewerNickname;
+    private String reviewerImg;
 
-    public static ReviewInBookDetailResponse from(Review review) {
-        return ReviewInBookDetailResponse.builder()
-                .reviewTitle(review.getReviewTitle())
-                .reviewContent(review.getReviewContent())
-                .reviewId(review.getReviewId())
-                .reviewerNickname(review.getUser().getUserNickname())
-                .build();
-    }
+//    public static ReviewInBookDetailResponse from(Review review) {
+//        return ReviewInBookDetailResponse.builder()
+//                .reviewTitle(review.getReviewTitle())
+//                .reviewContent(review.getReviewContent())
+//                .reviewId(review.getReviewId())
+//                .reviewerNickname(review.getUser().getUserNickname())
+//                .build();
+//    }
 }

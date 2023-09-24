@@ -59,8 +59,14 @@ public class ReviewService {
             dynamicLtId.and(review.reviewId.lt(reviewId));
         }
 
-        return queryFactory.select(Projections.constructor(ReviewInBookDetailResponse.class,
-                        review.reviewTitle, review.reviewContent, review.reviewId, review.user.userNickname.as("reviewerNickname")))
+        return queryFactory.select(
+                Projections.constructor(ReviewInBookDetailResponse.class,
+                        review.reviewTitle,
+                        review.reviewContent,
+                        review.reviewId,
+                        review.user.userNickname.as("reviewerNickname"),
+                        review.user.userPhoto.as("reviewerImg")
+                ))
                 .from(review)
                 .innerJoin(review.user, user)
                 .where(dynamicLtId

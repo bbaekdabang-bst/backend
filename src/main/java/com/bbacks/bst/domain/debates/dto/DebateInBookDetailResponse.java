@@ -13,5 +13,6 @@ public class DebateInBookDetailResponse {
     private Long debateId;
     private Integer debateType;
     private Integer debatePostCount;
+    private boolean debateLock;
 
 }
