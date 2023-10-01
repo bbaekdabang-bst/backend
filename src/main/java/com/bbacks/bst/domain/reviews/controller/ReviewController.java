@@ -35,7 +35,7 @@ public class ReviewController {
     }
 
     @GetMapping("/search")
-    public ApiResponseDto<?> searchBookToReview(@RequestParam @NotBlank String keyword) {
+    public ApiResponseDto<?> searchBookToReview(@Parameter(name = "keyword", in = ParameterIn.QUERY) @RequestParam @NotBlank String keyword) {
         List<BookToReviewResponse> bookToReview = bookService.searchBookToReview(keyword);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookToReview);
     }
