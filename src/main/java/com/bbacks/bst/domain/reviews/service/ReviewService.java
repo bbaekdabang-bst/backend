@@ -12,9 +12,6 @@ import com.bbacks.bst.domain.reviews.repository.ReviewBookmarkRepository;
 import com.bbacks.bst.domain.reviews.repository.ReviewCommentRepository;
 import com.bbacks.bst.domain.reviews.repository.ReviewRepository;
 import com.bbacks.bst.global.utils.S3Service;
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,10 +20,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
-
-import static com.bbacks.bst.domain.reviews.domain.QReview.review;
-import static com.bbacks.bst.domain.reviews.domain.QReviewComment.reviewComment;
-import static com.bbacks.bst.domain.user.domain.QUser.user;
 
 
 @Slf4j
@@ -41,7 +34,6 @@ public class ReviewService {
     private final ReviewCommentRepository commentRepository;
 
     private final S3Service s3Service;
-    private final JPAQueryFactory queryFactory;
 
 //    // offset, limit 사용하여 페이징 처리
 //    @Transactional(readOnly = true)
@@ -53,55 +45,17 @@ public class ReviewService {
 
     @Transactional(readOnly = true)
     public List<ReviewInBookDetailResponse> getBookDetailReviewNoOffset(Long bookId, Long reviewId){
-        BooleanBuilder dynamicLtId = new BooleanBuilder();
 
-        if (reviewId != null) {
-            dynamicLtId.and(review.reviewId.lt(reviewId));
-        }
+        List<ReviewInBookDetailResponse> bookDetailResponseList = reviewRepository.findReviewByBookIdNoOffset(bookId, reviewId);
+        return bookDetailResponseList;
 
-        return queryFactory.select(
-                Projections.constructor(ReviewInBookDetailResponse.class,
-                        review.reviewTitle,
-                        review.reviewContent,
-                        review.reviewId,
-                        review.user.userNickname.as("reviewerNickname"),
-                        review.user.userPhoto.as("reviewerImg")
-                ))
-                .from(review)
-                .innerJoin(review.user, user)
-                .where(dynamicLtId
-                        .and(review.book.bookId.eq(bookId)))
-                .orderBy(review.reviewId.desc())
-                .limit(3)
-                .fetch();
     }
 
 
     @Transactional(readOnly = true)
     public ReviewDetailResponse getReviewDetail(Long reviewId){
-        ReviewDetailResponse response =queryFactory
-                .select(new QReviewDetailResponse(
-                            review.reviewTitle,
-                            review.reviewContent,
-                            review.reviewImg,
-                            user.userNickname,
-                            user.userPhoto
-                    ))
-                .from(review)
-                .innerJoin(review.user, user)
-                .where(review.reviewId.eq(reviewId))
-                .fetchOne();
-        List<ReviewDetailCommentResponse> comments = queryFactory
-                .select(new QReviewDetailCommentResponse(
-                        user.userId,
-                        user.userNickname,
-                        user.userPhoto,
-                        reviewComment.commentText
-                ))
-                .from(reviewComment)
-                .innerJoin(reviewComment.user, user)
-                .where(reviewComment.review.reviewId.eq(reviewId))
-                .fetch();
+        ReviewDetailResponse response = reviewRepository.findReviewById(reviewId);
+        List<ReviewDetailCommentResponse> comments = reviewRepository.findReviewCommentById(reviewId);
 
         response.setReviewComments(comments);
         return response;
