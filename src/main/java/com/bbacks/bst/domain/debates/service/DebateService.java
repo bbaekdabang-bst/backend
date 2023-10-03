@@ -13,6 +13,8 @@ import com.bbacks.bst.domain.debates.repository.UserDebateRepository;
 import com.bbacks.bst.domain.user.repository.UserRepository;
 import com.bbacks.bst.domain.user.domain.User;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -180,11 +182,16 @@ public class DebateService {
             dynamicLtId.and(debate.debateId.lt(debateId));
         }
 
-        return queryFactory.select(Projections.constructor(DebateInBookDetailResponse.class,
-                debate.debateTopic,
-                debate.debateId,
-                debate.debateType,
-                debate.posts.size().as("debatePostCount")))
+
+        return queryFactory.select(
+                Projections.constructor(
+                        DebateInBookDetailResponse.class,
+                        debate.debateTopic,
+                        debate.debateId,
+                        debate.debateType,
+                        debate.posts.size().as("debatePostCount"),
+                        debate.debatePassword.isNull().or(debate.debatePassword.eq("")).not().as("debateLock")
+                ))
                 .from(debate)
                 .leftJoin(debate.posts, post)
                 .where(dynamicLtId
@@ -193,7 +200,6 @@ public class DebateService {
                 .orderBy(debate.debateId.desc())
                 .limit(3)
                 .fetch();
-
     }
 
 

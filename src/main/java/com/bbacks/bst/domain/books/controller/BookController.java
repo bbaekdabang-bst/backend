@@ -11,6 +11,7 @@ import com.bbacks.bst.domain.books.repository.BookImgAndId;
 import com.bbacks.bst.domain.books.service.BookService;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.bbacks.bst.global.response.SuccessStatus;
+import com.querydsl.core.Tuple;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.constraints.NotBlank;

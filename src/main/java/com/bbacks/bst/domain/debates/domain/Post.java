@@ -14,15 +14,15 @@ import java.util.Date;
 @Table(name = "post")
 @NoArgsConstructor
 public class Post {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "p_id")
     private Long postId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="deb_id")
     private Debate debate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     private User user;
 
