@@ -10,15 +10,19 @@ import com.bbacks.bst.domain.debates.repository.PostBookmarkRepository;
 import com.bbacks.bst.domain.debates.repository.PostRepository;
 import com.bbacks.bst.domain.user.repository.UserRepository;
 import com.bbacks.bst.domain.user.domain.User;
+import com.bbacks.bst.global.exception.PostNotFoundException;
 import com.bbacks.bst.global.filtering.BadWordsFiltering;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -31,9 +35,9 @@ public class PostService {
 
     // 글 작성
     @Transactional
-    public void createPost(CreatePostRequest createPostRequest, Long userId) {
-        Debate debate = debateRepository.findById(createPostRequest.getDebateId()).get();
-        User user = userRepository.findById(userId).get();
+    public void createPost(CreatePostRequest createPostRequest, Long debateId, Long userId) {
+        Debate debate = debateRepository.getReferenceById(debateId);
+        User user = userRepository.getReferenceById(userId);
 
         BadWordsFiltering badWordsFiltering = new BadWordsFiltering();
         String text = createPostRequest.getPostContent();
@@ -53,36 +57,34 @@ public class PostService {
 
     // 글 상세 페이지
     public ReadPostResponse readPost(Long postId) {
-        Post post = postRepository.findById(postId).get();
-        Debate debate = post.getDebate();
-        Book book = debate.getBook();
-        User user = post.getUser();
+        Post postEntity = postRepository.findPostDetailByPostId(postId)
+                .orElseThrow(() -> new PostNotFoundException());
 
-        List<Post> posts = postRepository.findByPostQuotationId(post.getPostId());
-        List<QuotationDto> quotationDtos = new ArrayList<>();
+        Debate debateEntity = postEntity.getDebate();
+        Book bookEntity = debateEntity.getBook();
+        User userEntity = postEntity.getUser();
 
-        if(!posts.isEmpty()) {
-            for(Post p:posts) {
-                QuotationDto quotationDto = readQuotation(p, user);
-                quotationDtos.add(quotationDto);
-            }
-        }
+        List<Post> quotationPosts = postRepository.findByPostQuotationId(postId);
+
+        List<QuotationDto> quotationDtos = quotationPosts.stream()
+                .map(p -> readQuotation(p))
+                .collect(Collectors.toList());
 
         DebateInfoDto debateInfoDto = DebateInfoDto.builder()
-                .bookTitle(book.getBookTitle())
-                .bookAuthor(book.getBookAuthor())
-                .topic(debate.getDebateTopic())
+                .bookTitle(bookEntity.getBookTitle())
+                .bookAuthor(bookEntity.getBookAuthor())
+                .topic(debateEntity.getDebateTopic())
                 .build();
 
         PostDto postDto = PostDto.builder()
-                .date(post.getPostCreatedAt())
-                .userNickname(user.getUserNickname())
-                .userPhoto(user.getUserPhoto())
-                .content(post.getPostContent())
-                .quotedPostId(post.getPostQuotationId())
+                .date(postEntity.getPostCreatedAt())
+                .userNickname(userEntity.getUserNickname())
+                .userPhoto(userEntity.getUserPhoto())
+                .content(postEntity.getPostContent())
+                .quotedPostId(postEntity.getPostQuotationId())
                 .like(getLikeCount(postId))
                 .dislike(getDislikeCount(postId))
-                .isPro(post.getPostIsPro())
+                .isPro(postEntity.getPostIsPro())
                 .build();
 
         ReadPostResponse readPostResponse = ReadPostResponse.builder()
@@ -93,12 +95,12 @@ public class PostService {
 
         return readPostResponse;
     }
-    public QuotationDto readQuotation(Post post, User user) {
+    public QuotationDto readQuotation(Post post) {
 
         QuotationDto quotationDto = QuotationDto.builder()
                 .date(post.getPostCreatedAt())
-                .userNickname(user.getUserNickname())
-                .userPhoto(user.getUserPhoto())
+                .userNickname(post.getUser().getUserNickname())
+                .userPhoto(post.getUser().getUserPhoto())
                 .content(post.getPostContent())
                 .build();
 
