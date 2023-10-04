@@ -18,6 +18,7 @@ import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,7 +38,7 @@ public class DebateService {
     private final BookRepository bookRepository;
     private final DebateRepository debateRepository;
     private final PostRepository postRepository;
-    private final PostService postService;
+    private final RedisService redisService;
 
     private final JPAQueryFactory queryFactory;
 
@@ -49,7 +50,7 @@ public class DebateService {
         List<UserDebate> userDebates = userDebateRepository.findByUser(user);
 
         if(!userDebates.isEmpty()) {
-            List<Debate> debates = userDebates.stream().map(UserDebate::getDebate).collect(Collectors.toList());
+            List<Debate> debates = userDebates.stream().map(UserDebate::getDebate).toList();
             for(Debate d:debates) {
                 Book book = d.getBook();
                 Category category = book.getBookCategory();
@@ -163,8 +164,8 @@ public class DebateService {
                         .userPhoto(user.getUserPhoto())
                         .content(p.getPostContent())
                         .quotedPostId(p.getPostQuotationId())
-                        .like(postService.getLikeCount(p.getPostId()))
-                        .dislike(postService.getDislikeCount(p.getPostId()))
+                        .like(redisService.getLikeCount(p.getPostId()))
+                        .dislike(redisService.getDislikeCount(p.getPostId()))
                         .isPro(p.getPostIsPro())
                         .build();
 

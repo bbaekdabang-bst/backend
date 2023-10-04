@@ -31,7 +31,7 @@ public class PostService {
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisService redisService;
 
     // 글 작성
     @Transactional
@@ -58,7 +58,7 @@ public class PostService {
     // 글 상세 페이지
     public ReadPostResponse readPost(Long postId) {
         Post postEntity = postRepository.findPostDetailByPostId(postId)
-                .orElseThrow(() -> new PostNotFoundException());
+                .orElseThrow(PostNotFoundException::new);
 
         Debate debateEntity = postEntity.getDebate();
         Book bookEntity = debateEntity.getBook();
@@ -67,7 +67,7 @@ public class PostService {
         List<Post> quotationPosts = postRepository.findByPostQuotationId(postId);
 
         List<QuotationDto> quotationDtos = quotationPosts.stream()
-                .map(p -> readQuotation(p))
+                .map(this::readQuotation)
                 .collect(Collectors.toList());
 
         DebateInfoDto debateInfoDto = DebateInfoDto.builder()
@@ -82,29 +82,25 @@ public class PostService {
                 .userPhoto(userEntity.getUserPhoto())
                 .content(postEntity.getPostContent())
                 .quotedPostId(postEntity.getPostQuotationId())
-                .like(getLikeCount(postId))
-                .dislike(getDislikeCount(postId))
+                .like(redisService.getLikeCount(postId))
+                .dislike(redisService.getDislikeCount(postId))
                 .isPro(postEntity.getPostIsPro())
                 .build();
 
-        ReadPostResponse readPostResponse = ReadPostResponse.builder()
+        return ReadPostResponse.builder()
                 .debateInfoDto(debateInfoDto)
                 .postDto(postDto)
                 .quotationDtos(quotationDtos)
                 .build();
-
-        return readPostResponse;
     }
     public QuotationDto readQuotation(Post post) {
 
-        QuotationDto quotationDto = QuotationDto.builder()
+        return QuotationDto.builder()
                 .date(post.getPostCreatedAt())
                 .userNickname(post.getUser().getUserNickname())
                 .userPhoto(post.getUser().getUserPhoto())
                 .content(post.getPostContent())
                 .build();
-
-        return quotationDto;
     }
 
     // 글 삭제
@@ -117,34 +113,12 @@ public class PostService {
     // 글 좋아요
     @Transactional
     public boolean likePost(Long userId, Long postId) {
-        String likeKey = "post: " + postId + ":likes";
-        String userKey = "user: " + userId + ":liked";
-
-        if (!redisTemplate.opsForSet().isMember(userKey, String.valueOf(postId))) {
-            redisTemplate.opsForValue().increment(likeKey);
-            redisTemplate.opsForSet().add(userKey, String.valueOf(postId));
-            return true;
-        } else{
-            redisTemplate.opsForValue().decrement(likeKey);
-            redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
-            return false;
-        }
+        return redisService.doLike(postId, userId);
     }
 
     // 글 싫어요
     public boolean dislikePost(Long userId, Long postId) {
-        String dislikeKey = "post: " + postId + ":dislikes";
-        String userKey = "user: " + userId + ":disliked";
-
-        if (!redisTemplate.opsForSet().isMember(userKey, String.valueOf(postId))) {
-            redisTemplate.opsForValue().increment(dislikeKey);
-            redisTemplate.opsForSet().add(userKey, String.valueOf(postId));
-            return true;
-        } else {
-            redisTemplate.opsForValue().decrement(dislikeKey);
-            redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
-            return false;
-        }
+        return redisService.doDisLike(postId, userId);
     }
 
     // 토론글 북마크
@@ -171,28 +145,6 @@ public class PostService {
         Post post = postRepository.findById(postId).get();
 
         postBookmarkRepository.deleteByUserAndPost(user, post);
-    }
-
-    public Integer getLikeCount(Long postId) {
-        String likeKey = "post: " + postId + ":likes";
-        Object likeCount = redisTemplate.opsForValue().get(likeKey);
-
-        if(likeCount != null) {
-            return Integer.parseInt(likeCount.toString());
-        } else {
-            return 0;
-        }
-    }
-
-    public Integer getDislikeCount(Long postId) {
-        String dislikeKey = "post: " + postId + ":dislikes";
-        Object dislikeCount = redisTemplate.opsForValue().get(dislikeKey);
-
-        if(dislikeCount != null) {
-            return Integer.parseInt(dislikeCount.toString());
-        } else {
-            return 0;
-        }
     }
 
 }
