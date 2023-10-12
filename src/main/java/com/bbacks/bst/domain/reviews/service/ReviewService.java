@@ -53,10 +53,20 @@ public class ReviewService {
 
 
     @Transactional(readOnly = true)
-    public ReviewDetailResponse getReviewDetail(Long reviewId){
+    public ReviewDetailResponse getReviewDetail(Long reviewId, Long userId){
         ReviewDetailResponse response = reviewRepository.findReviewById(reviewId);
-        List<ReviewDetailCommentResponse> comments = reviewRepository.findReviewCommentById(reviewId);
 
+        User user = userRepository.getReferenceById(userId);
+        Review review = reviewRepository.getReferenceById(reviewId);
+        Optional<ReviewBookmark> reviewBookmark = reviewBookmarkRepository.findByUserAndReview(user, review);
+
+        boolean isBookmarked = false;
+        if(reviewBookmark.isPresent()){
+            isBookmarked = true;
+        }
+        response.setBookmarked(isBookmarked);
+
+        List<ReviewDetailCommentResponse> comments = reviewRepository.findReviewCommentById(reviewId);
         response.setReviewComments(comments);
         return response;
 

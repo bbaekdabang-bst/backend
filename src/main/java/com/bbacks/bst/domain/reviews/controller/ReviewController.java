@@ -41,8 +41,9 @@ public class ReviewController {
     }
 
     @GetMapping("/{reviewId}")
-    public ApiResponseDto<?> getReviewDetail(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
-        ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId);
+    public ApiResponseDto<?> getReviewDetail(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId,
+                                             Authentication authentication){
+        ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId, getUserId(authentication));
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewDetailResponse);
     }
 
