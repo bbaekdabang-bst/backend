@@ -56,7 +56,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom{
                                 review.reviewContent,
                                 review.reviewImg,
                                 user.userNickname,
-                                user.userPhoto))
+                                user.userPhoto,
+                                review.reviewSpoiler))
                 .from(review)
                 .innerJoin(review.user, user)
                 .where(review.reviewId.eq(reviewId))
