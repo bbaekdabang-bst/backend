@@ -2,6 +2,7 @@ package com.bbacks.bst.domain.reviews.controller;
 
 import com.bbacks.bst.domain.books.dto.BookToReviewResponse;
 import com.bbacks.bst.domain.books.service.BookService;
+import com.bbacks.bst.domain.reviews.dto.ReviewDetailCommentResponse;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.bbacks.bst.global.response.SuccessStatus;
 import com.bbacks.bst.domain.reviews.dto.ReviewCommentRequest;
@@ -45,6 +46,12 @@ public class ReviewController {
                                              Authentication authentication){
         ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId, getUserId(authentication));
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewDetailResponse);
+    }
+
+    @GetMapping("/{reviewId}/comment")
+    public ApiResponseDto<?> getReviewDetailComments(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
+        List<ReviewDetailCommentResponse> responses = reviewService.getReviewDetailComment(reviewId);
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, responses);
     }
 
     @GetMapping("/{reviewId}/bookmark")

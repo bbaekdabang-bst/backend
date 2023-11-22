@@ -69,7 +69,12 @@ public class ReviewService {
         List<ReviewDetailCommentResponse> comments = reviewRepository.findReviewCommentById(reviewId);
         response.setReviewComments(comments);
         return response;
+    }
 
+    @Transactional(readOnly = true)
+    public List<ReviewDetailCommentResponse> getReviewDetailComment(Long reviewId){
+        List<ReviewDetailCommentResponse> comments = reviewRepository.findReviewCommentById(reviewId);
+        return comments;
     }
 
 
