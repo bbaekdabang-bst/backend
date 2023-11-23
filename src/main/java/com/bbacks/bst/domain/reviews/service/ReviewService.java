@@ -101,9 +101,11 @@ public class ReviewService {
     }
 
     @Transactional
-    public Long postBookReview(Long bookId, Long userId, ReviewRequest reviewRequest, MultipartFile file) {
+    public Long postBookReview(Long bookId, Long userId, ReviewRequest reviewRequest) {
         User user = userRepository.getReferenceById(userId);
         Book book = bookRepository.getReferenceById(bookId);
+
+        MultipartFile file = reviewRequest.getFile();
 
         Review review = Review.builder()
                 .user(user)
