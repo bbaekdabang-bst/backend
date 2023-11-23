@@ -93,13 +93,18 @@ public class UserService {
         String imageLink = user.getUserPhoto(); //현재 프로필 사진 url
 
         if(!file.isEmpty()) {
-            if(!imageLink.isEmpty()){
-                s3Service.deleteS3Object(imageLink); //기존 사진 s3에서 삭제
-                log.info("기존 프로필 사진 삭제 완료!");
+            if(imageLink == null){ //기존 사진이 없었을 경우
+                imageLink = s3Service.uploadFile(file); //새 사진 s3에 업로드
+                user.updatePhoto(imageLink); //user 객체에 새 s3 링크 저장
+                log.info("새 프로필 사진 업로드 완료!");
             }
-            imageLink = s3Service.uploadFile(file); //새 사진 s3에 업로드
-            user.updatePhoto(imageLink); //user 객체에 새 s3 링크 저장
-            log.info("새 프로필 사진 업로드 완료!");
+            else {
+                s3Service.deleteS3Object(imageLink); //기존 사진 s3에서 삭제
+                imageLink = s3Service.uploadFile(file); //새 사진 s3에 업로드
+                user.updatePhoto(imageLink); //user 객체에 새 s3 링크 저장
+                log.info("기존 프로필 사진 삭제 후 새 프로필 사진 업로드 완료!");
+            }
+
         }
         if(!userNickname.isEmpty()) {
             user.updateNickname(userNickname);
