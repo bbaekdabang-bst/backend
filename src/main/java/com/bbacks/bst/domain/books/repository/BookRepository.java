@@ -1,6 +1,7 @@
 package com.bbacks.bst.domain.books.repository;
 
 import com.bbacks.bst.domain.books.domain.Book;
+import com.bbacks.bst.domain.categories.domain.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -12,7 +13,6 @@ public interface BookRepository extends JpaRepository<Book, Long> {
     List<BookImgAndId> findTop10ByOrderByBookIdAsc();
     List<BookImgAndId> findTop10ByOrderByBookPubYearDesc();
     Optional<Book> findByBookId(Long bookId);
-
     @Query("SELECT b FROM Book b WHERE " +
             "(:keyword1 IS NOT NULL AND b.bookTitle LIKE %:keyword1%) OR " +
             "(:keyword2 IS NOT NULL AND b.bookAuthor LIKE %:keyword2%) OR " +

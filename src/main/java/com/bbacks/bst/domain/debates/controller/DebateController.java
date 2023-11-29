@@ -8,6 +8,7 @@ import com.bbacks.bst.domain.debates.dto.DebateOutlineResponse;
 import com.bbacks.bst.domain.debates.dto.MyDebateResponse;
 import com.bbacks.bst.domain.debates.dto.PostDto;
 import com.bbacks.bst.domain.debates.service.DebateService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -40,7 +41,7 @@ public class DebateController {
 
     // 토론 개설
     @PostMapping("/debate/create")
-    public ApiResponseDto<?> createDebate(@RequestBody CreateDebateRequest createDebateRequest) {
+    public ApiResponseDto<?> createDebate(@RequestBody @Valid CreateDebateRequest createDebateRequest) {
         debateService.createDebate(createDebateRequest);
 
         return ApiResponseDto.success(SuccessStatus.CREATE_DEBATE_SUCCESS);

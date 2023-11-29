@@ -58,6 +58,7 @@ public class DebateService {
                 MyDebateResponse myDebateResponse = MyDebateResponse.builder()
                         .bookTitle(book.getBookTitle())
                         .bookAuthor(book.getBookAuthor())
+                        .debateId(d.getDebateId())
                         .debateTopic(d.getDebateTopic())
                         .debateType(d.getDebateType())
                         .categoryName(category.getCategoryName())
@@ -159,6 +160,7 @@ public class DebateService {
             for(Post p:postList) {
                 User user = p.getUser();
                 PostDto postDto = PostDto.builder()
+                        .postId(p.getPostId())
                         .date(p.getPostCreatedAt())
                         .userNickname(user.getUserNickname())
                         .userPhoto(user.getUserPhoto())
@@ -168,7 +170,6 @@ public class DebateService {
                         .dislike(redisService.getDislikeCount(p.getPostId()))
                         .isPro(p.getPostIsPro())
                         .build();
-
                 posts.add(postDto);
             }
         }

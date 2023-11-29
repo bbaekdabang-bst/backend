@@ -9,6 +9,7 @@ import java.util.Date;
 @Getter
 public class PostDto {
     // @DateTimeFormat(pattern = "yyyy-MM-dd")
+    private Long postId;
     private Date date;
     private String userNickname;
     private String userPhoto;
@@ -19,7 +20,8 @@ public class PostDto {
     private Integer isPro;
 
     @Builder
-    public PostDto(Date date, String userNickname, String userPhoto, String content, Long quotedPostId, Long like, Long dislike, Integer isPro) {
+    public PostDto(Long postId, Date date, String userNickname, String userPhoto, String content, Long quotedPostId, Integer like, Integer dislike, Integer isPro) {
+        this.postId = postId;
         this.date = date;
         this.userNickname = userNickname;
         this.userPhoto = userPhoto;
