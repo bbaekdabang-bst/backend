@@ -46,6 +46,17 @@ public class BookService {
                     public String getBookImg() {
                         return book.getBookImg();
                     }
+
+                    @Override
+                    public String getBookTitle() {
+                        return book.getBookTitle();
+                    }
+
+                    @Override
+                    public String getBookAuthor() {
+                        return book.getBookAuthor();
+                    }
+
                 })
                 .collect(Collectors.toList());
     }
