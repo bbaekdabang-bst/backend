@@ -152,6 +152,7 @@ public class DebateService {
             for(Post p:postList) {
                 User user = p.getUser();
                 PostDto postDto = PostDto.builder()
+                        .postId(p.getPostId())
                         .date(p.getPostCreatedAt())
                         .userNickname(user.getUserNickname())
                         .userPhoto(user.getUserPhoto())
@@ -161,7 +162,6 @@ public class DebateService {
                         .dislike(postService.getDislikeCount(p.getPostId()))
                         .isPro(p.getPostIsPro())
                         .build();
-
                 posts.add(postDto);
             }
         }

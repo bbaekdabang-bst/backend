@@ -14,7 +14,7 @@ import java.util.Date;
 @Table(name = "post")
 @NoArgsConstructor
 public class Post {
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "p_id")
     private Long postId;
 
