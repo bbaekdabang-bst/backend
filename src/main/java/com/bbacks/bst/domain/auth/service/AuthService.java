@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -40,6 +41,15 @@ public class AuthService {
         stringStringValueOperations.set(refreshKey, refreshToken, refreshTokenExpirationPeriod, TimeUnit.MILLISECONDS);
 
         return refreshKey;
+    }
+
+    //DB에 refreshKey 저장
+    public void saveRefreshKey(String refreshKey, String userSocialId) {
+        User user = userRepository.findByUserSocialId(userSocialId)
+                .orElseThrow(UserIdNotFoundException::new);
+        user.updateRefreshToken(refreshKey);
+        userRepository.save(user);
+
     }
 
     public Long checkSocialIdAndGetUserId(String socialId){
@@ -83,5 +93,15 @@ public class AuthService {
             throw new NeedLoginException();
         }
 
+    }
+
+    public void logout(Long userId){
+        User user = userRepository.findById(userId)
+                .orElseThrow(UserIdNotFoundException::new);
+        String redisKey = user.getUserToken();
+        //redis에 정보가 존재하면 삭제 -> 로그아웃
+        if (redisTemplate.opsForValue().get(redisKey) != null) {
+            redisTemplate.delete(redisKey); //토큰 삭제
+        }
     }
 }

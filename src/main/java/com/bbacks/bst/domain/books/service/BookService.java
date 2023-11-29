@@ -34,7 +34,31 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookImgAndId> getBooksByKeyword(String keyword){
-        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrBookPublisherContainingOrderByBookIdAsc(keyword, keyword, keyword);
+        List<Book> books = bookRepository.searchBooksByKeywords(keyword, keyword, keyword);
+        return books.stream()
+                .map(book -> new BookImgAndId() {
+                    @Override
+                    public Long getBookId() {
+                        return book.getBookId();
+                    }
+
+                    @Override
+                    public String getBookImg() {
+                        return book.getBookImg();
+                    }
+
+                    @Override
+                    public String getBookTitle() {
+                        return book.getBookTitle();
+                    }
+
+                    @Override
+                    public String getBookAuthor() {
+                        return book.getBookAuthor();
+                    }
+
+                })
+                .collect(Collectors.toList());
     }
 
     @Transactional(readOnly = true)
@@ -46,11 +70,10 @@ public class BookService {
 
     @Transactional(readOnly = true)
     public List<BookToReviewResponse> searchBookToReview(String keyword) {
-        List<Book> books = bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
+        List<Book> books = bookRepository.searchBooksByKeywords(keyword, keyword, null);
         return books.stream()
                 .map(BookToReviewResponse::from)
                 .collect(Collectors.toList());
-//        return bookRepository.findAllByBookTitleContainingOrBookAuthorContainingOrderByBookIdAsc(keyword, keyword);
     }
 
 }

@@ -10,15 +10,19 @@ import com.bbacks.bst.domain.debates.repository.PostBookmarkRepository;
 import com.bbacks.bst.domain.debates.repository.PostRepository;
 import com.bbacks.bst.domain.user.repository.UserRepository;
 import com.bbacks.bst.domain.user.domain.User;
+import com.bbacks.bst.global.exception.PostNotFoundException;
 import com.bbacks.bst.global.filtering.BadWordsFiltering;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
+
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PostService {
@@ -27,13 +31,13 @@ public class PostService {
     private final DebateRepository debateRepository;
     private final UserRepository userRepository;
     private final PostBookmarkRepository postBookmarkRepository;
-    private final RedisTemplate<String, Object> redisTemplate;
+    private final RedisService redisService;
 
     // 글 작성
     @Transactional
-    public void createPost(CreatePostRequest createPostRequest, Long userId) {
-        Debate debate = debateRepository.findById(createPostRequest.getDebateId()).get();
-        User user = userRepository.findById(userId).get();
+    public void createPost(CreatePostRequest createPostRequest, Long debateId, Long userId) {
+        Debate debate = debateRepository.getReferenceById(debateId);
+        User user = userRepository.getReferenceById(userId);
 
         BadWordsFiltering badWordsFiltering = new BadWordsFiltering();
         String text = createPostRequest.getPostContent();
@@ -53,56 +57,50 @@ public class PostService {
 
     // 글 상세 페이지
     public ReadPostResponse readPost(Long postId) {
-        Post post = postRepository.findById(postId).get();
-        Debate debate = post.getDebate();
-        Book book = debate.getBook();
-        User user = post.getUser();
+        Post postEntity = postRepository.findPostDetailByPostId(postId)
+                .orElseThrow(PostNotFoundException::new);
 
-        List<Post> posts = postRepository.findByPostQuotationId(post.getPostId());
-        List<QuotationDto> quotationDtos = new ArrayList<>();
+        Debate debateEntity = postEntity.getDebate();
+        Book bookEntity = debateEntity.getBook();
+        User userEntity = postEntity.getUser();
 
-        if(!posts.isEmpty()) {
-            for(Post p:posts) {
-                QuotationDto quotationDto = readQuotation(p, user);
-                quotationDtos.add(quotationDto);
-            }
-        }
+        List<Post> quotationPosts = postRepository.findByPostQuotationId(postId);
+
+        List<QuotationDto> quotationDtos = quotationPosts.stream()
+                .map(this::readQuotation)
+                .collect(Collectors.toList());
 
         DebateInfoDto debateInfoDto = DebateInfoDto.builder()
-                .bookTitle(book.getBookTitle())
-                .bookAuthor(book.getBookAuthor())
-                .topic(debate.getDebateTopic())
+                .bookTitle(bookEntity.getBookTitle())
+                .bookAuthor(bookEntity.getBookAuthor())
+                .topic(debateEntity.getDebateTopic())
                 .build();
 
         PostDto postDto = PostDto.builder()
-                .date(post.getPostCreatedAt())
-                .userNickname(user.getUserNickname())
-                .userPhoto(user.getUserPhoto())
-                .content(post.getPostContent())
-                .quotedPostId(post.getPostQuotationId())
-                .like(getLikeCount(postId))
-                .dislike(getDislikeCount(postId))
-                .isPro(post.getPostIsPro())
+                .date(postEntity.getPostCreatedAt())
+                .userNickname(userEntity.getUserNickname())
+                .userPhoto(userEntity.getUserPhoto())
+                .content(postEntity.getPostContent())
+                .quotedPostId(postEntity.getPostQuotationId())
+                .like(redisService.getLikeCount(postId))
+                .dislike(redisService.getDislikeCount(postId))
+                .isPro(postEntity.getPostIsPro())
                 .build();
 
-        ReadPostResponse readPostResponse = ReadPostResponse.builder()
+        return ReadPostResponse.builder()
                 .debateInfoDto(debateInfoDto)
                 .postDto(postDto)
                 .quotationDtos(quotationDtos)
                 .build();
-
-        return readPostResponse;
     }
-    public QuotationDto readQuotation(Post post, User user) {
+    public QuotationDto readQuotation(Post post) {
 
-        QuotationDto quotationDto = QuotationDto.builder()
+        return QuotationDto.builder()
                 .date(post.getPostCreatedAt())
-                .userNickname(user.getUserNickname())
-                .userPhoto(user.getUserPhoto())
+                .userNickname(post.getUser().getUserNickname())
+                .userPhoto(post.getUser().getUserPhoto())
                 .content(post.getPostContent())
                 .build();
-
-        return quotationDto;
     }
 
     // 글 삭제
@@ -115,34 +113,12 @@ public class PostService {
     // 글 좋아요
     @Transactional
     public boolean likePost(Long userId, Long postId) {
-        String likeKey = "post: " + postId + ":likes";
-        String userKey = "user: " + userId + ":liked";
-
-        if (!redisTemplate.opsForSet().isMember(userKey, String.valueOf(postId))) {
-            redisTemplate.opsForValue().increment(likeKey);
-            redisTemplate.opsForSet().add(userKey, String.valueOf(postId));
-            return true;
-        } else{
-            redisTemplate.opsForValue().decrement(likeKey);
-            redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
-            return false;
-        }
+        return redisService.doLike(postId, userId);
     }
 
     // 글 싫어요
     public boolean dislikePost(Long userId, Long postId) {
-        String dislikeKey = "post: " + postId + ":dislikes";
-        String userKey = "user: " + userId + ":disliked";
-
-        if (!redisTemplate.opsForSet().isMember(userKey, String.valueOf(postId))) {
-            redisTemplate.opsForValue().increment(dislikeKey);
-            redisTemplate.opsForSet().add(userKey, String.valueOf(postId));
-            return true;
-        } else {
-            redisTemplate.opsForValue().decrement(dislikeKey);
-            redisTemplate.opsForSet().remove(userKey, String.valueOf(postId));
-            return false;
-        }
+        return redisService.doDisLike(postId, userId);
     }
 
     // 토론글 북마크
@@ -169,28 +145,6 @@ public class PostService {
         Post post = postRepository.findById(postId).get();
 
         postBookmarkRepository.deleteByUserAndPost(user, post);
-    }
-
-    public Integer getLikeCount(Long postId) {
-        String likeKey = "post: " + postId + ":likes";
-        Object likeCount = redisTemplate.opsForValue().get(likeKey);
-
-        if(likeCount != null) {
-            return Integer.parseInt(likeCount.toString());
-        } else {
-            return 0;
-        }
-    }
-
-    public Integer getDislikeCount(Long postId) {
-        String dislikeKey = "post: " + postId + ":dislikes";
-        Object dislikeCount = redisTemplate.opsForValue().get(dislikeKey);
-
-        if(dislikeCount != null) {
-            return Integer.parseInt(dislikeCount.toString());
-        } else {
-            return 0;
-        }
     }
 
 }

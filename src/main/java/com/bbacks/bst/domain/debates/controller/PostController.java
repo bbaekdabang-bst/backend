@@ -5,17 +5,16 @@ import com.bbacks.bst.global.response.SuccessStatus;
 import com.bbacks.bst.domain.debates.dto.CreatePostRequest;
 import com.bbacks.bst.domain.debates.dto.ReadPostResponse;
 import com.bbacks.bst.domain.debates.service.PostService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequiredArgsConstructor
 public class PostController {
 
     private final PostService postService;
 
-    public PostController(PostService postService) {
-        this.postService = postService;
-    }
     private Long getUserId(Authentication authentication) {
         return Long.parseLong(authentication.getName());
     }
@@ -25,7 +24,7 @@ public class PostController {
     public ApiResponseDto<?> createPost(@PathVariable("deb-id") Long debateId, @RequestBody CreatePostRequest createPostRequest,
                                         Authentication authentication) {
         Long userId = getUserId(authentication);
-        postService.createPost(createPostRequest, userId);
+        postService.createPost(createPostRequest, debateId, userId);
 
         return ApiResponseDto.success(SuccessStatus.DEBATE_POST_SUCCESS);
     }

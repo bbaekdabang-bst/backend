@@ -18,11 +18,11 @@ public class Post {
     @Column(name = "p_id")
     private Long postId;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="deb_id")
     private Debate debate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     private User user;
 

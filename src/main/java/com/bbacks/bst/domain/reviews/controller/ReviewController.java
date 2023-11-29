@@ -2,6 +2,7 @@ package com.bbacks.bst.domain.reviews.controller;
 
 import com.bbacks.bst.domain.books.dto.BookToReviewResponse;
 import com.bbacks.bst.domain.books.service.BookService;
+import com.bbacks.bst.domain.reviews.dto.ReviewDetailCommentResponse;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.bbacks.bst.global.response.SuccessStatus;
 import com.bbacks.bst.domain.reviews.dto.ReviewCommentRequest;
@@ -35,15 +36,22 @@ public class ReviewController {
     }
 
     @GetMapping("/search")
-    public ApiResponseDto<?> searchBookToReview(@RequestParam @NotBlank String keyword) {
+    public ApiResponseDto<?> searchBookToReview(@Parameter(name = "keyword", in = ParameterIn.QUERY) @RequestParam @NotBlank String keyword) {
         List<BookToReviewResponse> bookToReview = bookService.searchBookToReview(keyword);
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookToReview);
     }
 
     @GetMapping("/{reviewId}")
-    public ApiResponseDto<?> getReviewDetail(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
-        ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId);
+    public ApiResponseDto<?> getReviewDetail(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId,
+                                             Authentication authentication){
+        ReviewDetailResponse reviewDetailResponse = reviewService.getReviewDetail(reviewId, getUserId(authentication));
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, reviewDetailResponse);
+    }
+
+    @GetMapping("/{reviewId}/comment")
+    public ApiResponseDto<?> getReviewDetailComments(@Parameter(name = "reviewId", in= ParameterIn.PATH) @PathVariable Long reviewId){
+        List<ReviewDetailCommentResponse> responses = reviewService.getReviewDetailComment(reviewId);
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, responses);
     }
 
     @GetMapping("/{reviewId}/bookmark")
@@ -59,16 +67,27 @@ public class ReviewController {
     }
 
 
-    @PostMapping(value = "/{bookId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+//    @PostMapping(value = "/{bookId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+//    public ApiResponseDto<?> postBookReview(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId,
+//                                            @RequestPart(value = "body") @Valid ReviewRequest reviewRequest,
+//                                            @RequestPart(value = "file", required = false) MultipartFile file,
+//                                            Authentication authentication){
+//
+//        Long userId = getUserId(authentication);
+//
+//        Long reviewId = reviewService.postBookReview(bookId, userId, reviewRequest, file);
+//        return ApiResponseDto.success(SuccessStatus.POST_SUCCESS);
+//
+//    }
+
+    @PostMapping(value = "/{bookId}", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     public ApiResponseDto<?> postBookReview(@Parameter(name = "bookId", in= ParameterIn.PATH) @PathVariable Long bookId,
-                                            @RequestPart(value = "body") @Valid ReviewRequest reviewRequest,
-                                            @RequestPart(value = "file", required = false) MultipartFile file,
+                                            @Valid @ModelAttribute ReviewRequest reviewRequest,
                                             Authentication authentication){
 
         Long userId = getUserId(authentication);
-
-        Long reviewId = reviewService.postBookReview(bookId, userId, reviewRequest, file);
-        return ApiResponseDto.success(SuccessStatus.POST_SUCCESS);
+        Long reviewId = reviewService.postBookReview(bookId, userId, reviewRequest);
+        return ApiResponseDto.success(SuccessStatus.POST_SUCCESS, reviewId);
 
     }
 

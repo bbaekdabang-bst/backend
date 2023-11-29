@@ -15,8 +15,8 @@ public class PostDto {
     private String userPhoto;
     private String content;
     private Long quotedPostId;
-    private Integer like;
-    private Integer dislike;
+    private Long like;
+    private Long dislike;
     private Integer isPro;
 
     @Builder

@@ -6,5 +6,7 @@ public interface BookImgAndId {
      */
     Long getBookId();
     String getBookImg();
+    String getBookTitle();
+    String getBookAuthor();
 
 }

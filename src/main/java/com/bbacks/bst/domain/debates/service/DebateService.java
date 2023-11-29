@@ -6,22 +6,28 @@ import com.bbacks.bst.domain.categories.domain.Category;
 import com.bbacks.bst.domain.debates.domain.Debate;
 import com.bbacks.bst.domain.debates.domain.Post;
 import com.bbacks.bst.domain.debates.domain.UserDebate;
-import com.bbacks.bst.domain.debates.dto.CreateDebateRequest;
-import com.bbacks.bst.domain.debates.dto.DebateOutlineResponse;
-import com.bbacks.bst.domain.debates.dto.MyDebateResponse;
-import com.bbacks.bst.domain.debates.dto.PostDto;
+import com.bbacks.bst.domain.debates.dto.*;
 import com.bbacks.bst.domain.debates.repository.PostRepository;
 import com.bbacks.bst.domain.debates.repository.DebateRepository;
 import com.bbacks.bst.domain.debates.repository.UserDebateRepository;
 import com.bbacks.bst.domain.user.repository.UserRepository;
 import com.bbacks.bst.domain.user.domain.User;
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.bbacks.bst.domain.debates.domain.QDebate.debate;
+import static com.bbacks.bst.domain.debates.domain.QPost.post;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +38,9 @@ public class DebateService {
     private final BookRepository bookRepository;
     private final DebateRepository debateRepository;
     private final PostRepository postRepository;
-    private final PostService postService;
+    private final RedisService redisService;
+
+    private final JPAQueryFactory queryFactory;
 
     // 내가 참여한 토론방
     public List<MyDebateResponse> myDebate(Long userId) {
@@ -42,7 +50,7 @@ public class DebateService {
         List<UserDebate> userDebates = userDebateRepository.findByUser(user);
 
         if(!userDebates.isEmpty()) {
-            List<Debate> debates = userDebates.stream().map(UserDebate::getDebate).collect(Collectors.toList());
+            List<Debate> debates = userDebates.stream().map(UserDebate::getDebate).toList();
             for(Debate d:debates) {
                 Book book = d.getBook();
                 Category category = book.getBookCategory();
@@ -158,8 +166,8 @@ public class DebateService {
                         .userPhoto(user.getUserPhoto())
                         .content(p.getPostContent())
                         .quotedPostId(p.getPostQuotationId())
-                        .like(postService.getLikeCount(p.getPostId()))
-                        .dislike(postService.getDislikeCount(p.getPostId()))
+                        .like(redisService.getLikeCount(p.getPostId()))
+                        .dislike(redisService.getDislikeCount(p.getPostId()))
                         .isPro(p.getPostIsPro())
                         .build();
                 posts.add(postDto);
@@ -167,6 +175,33 @@ public class DebateService {
         }
 
         return posts;
+    }
+
+    @Transactional(readOnly = true)
+    public List<DebateInBookDetailResponse> getBookDetailDebateNoOffset(Long bookId, Long debateId){
+        BooleanBuilder dynamicLtId = new BooleanBuilder();
+        if(debateId != null){
+            dynamicLtId.and(debate.debateId.lt(debateId));
+        }
+
+
+        return queryFactory.select(
+                Projections.constructor(
+                        DebateInBookDetailResponse.class,
+                        debate.debateTopic,
+                        debate.debateId,
+                        debate.debateType,
+                        debate.posts.size().as("debatePostCount"),
+                        debate.debatePassword.isNull().or(debate.debatePassword.eq("")).not().as("debateLock")
+                ))
+                .from(debate)
+                .leftJoin(debate.posts, post)
+                .where(dynamicLtId
+                        .and(debate.book.bookId.eq(bookId)))
+                .groupBy(debate.debateId)
+                .orderBy(debate.debateId.desc())
+                .limit(3)
+                .fetch();
     }
 
 

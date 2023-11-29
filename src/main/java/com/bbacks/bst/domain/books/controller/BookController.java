@@ -3,12 +3,15 @@ package com.bbacks.bst.domain.books.controller;
 
 import com.bbacks.bst.domain.books.dto.BookDetailResponse;
 import com.bbacks.bst.domain.books.dto.BookMainResponse;
+import com.bbacks.bst.domain.debates.dto.DebateInBookDetailResponse;
+import com.bbacks.bst.domain.debates.service.DebateService;
 import com.bbacks.bst.domain.reviews.dto.ReviewInBookDetailResponse;
 import com.bbacks.bst.domain.reviews.service.ReviewService;
 import com.bbacks.bst.domain.books.repository.BookImgAndId;
 import com.bbacks.bst.domain.books.service.BookService;
 import com.bbacks.bst.global.response.ApiResponseDto;
 import com.bbacks.bst.global.response.SuccessStatus;
+import com.querydsl.core.Tuple;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import jakarta.validation.constraints.NotBlank;
@@ -27,6 +30,7 @@ public class BookController {
 
     private final BookService bookService;
     private final ReviewService reviewService;
+    private final DebateService debateService;
 
     @GetMapping
     public ApiResponseDto<?> getMainBooks(){
@@ -69,5 +73,12 @@ public class BookController {
         return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailReview);
     }
 
+    @GetMapping("/detail/{bookId}/debate")
+    public ApiResponseDto<?> getBookDetailDebateNoOffset(@Parameter(name = "bookId", in = ParameterIn.PATH) @PathVariable Long bookId,
+                                                         @RequestParam(value = "last", required = false) Long debateId){
+
+        List<DebateInBookDetailResponse> bookDetailDebate = debateService.getBookDetailDebateNoOffset(bookId, debateId);
+        return ApiResponseDto.success(SuccessStatus.GET_SUCCESS, bookDetailDebate);
+    }
 
 }

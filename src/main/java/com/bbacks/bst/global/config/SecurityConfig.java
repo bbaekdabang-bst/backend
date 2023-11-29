@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -32,6 +33,7 @@ public class SecurityConfig {
     private final OAuth2LoginFailureHandler oAuth2LoginFailureHandler;
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomAuthorizationRequestRepository customAuthorizationRequestRepository;
+    private final RedisTemplate redisTemplate;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -43,7 +45,7 @@ public class SecurityConfig {
                 .headers(header -> header.frameOptions(frame -> frame.disable()))
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(request -> request
-                        .requestMatchers("/user/**", "/oauth2/**", "/auth/**", "/api/v1/auth/refresh")
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-resources/**", "/user/**", "/oauth2/**", "/auth/**", "/api/v1/auth/refresh")
                             .permitAll()
                         .requestMatchers("/", "/favicon.ico", "/**.png", "/**.jpg", "/**.html", "/**.css", "/**.js")
                             .permitAll()
@@ -68,7 +70,7 @@ public class SecurityConfig {
 
     @Bean
     public JwtFilter jwtFilter(){
-        return new JwtFilter(authService, jwtService);
+        return new JwtFilter(authService, jwtService, userRepository, redisTemplate);
     }
 
 //    @Bean
