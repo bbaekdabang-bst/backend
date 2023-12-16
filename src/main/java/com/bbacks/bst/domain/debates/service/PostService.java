@@ -64,6 +64,11 @@ public class PostService {
         Book bookEntity = debateEntity.getBook();
         User userEntity = postEntity.getUser();
 
+        String quotedPostContent = " ";
+        if (postEntity.getPostQuotationId() != null) {
+            quotedPostContent = postRepository.findById(postEntity.getPostQuotationId()).get().getPostContent();
+        }
+
         List<Post> quotationPosts = postRepository.findByPostQuotationId(postId);
 
         List<QuotationDto> quotationDtos = quotationPosts.stream()
@@ -81,7 +86,7 @@ public class PostService {
                 .userNickname(userEntity.getUserNickname())
                 .userPhoto(userEntity.getUserPhoto())
                 .content(postEntity.getPostContent())
-                .quotedPostId(postEntity.getPostQuotationId())
+                .quotedPostContent(quotedPostContent)
                 .like(redisService.getLikeCount(postId))
                 .dislike(redisService.getDislikeCount(postId))
                 .isPro(postEntity.getPostIsPro())

@@ -11,4 +11,6 @@ import java.util.List;
 public interface PostRepository extends JpaRepository<Post, Long>, PostRepositoryCustom {
     List<Post> findByPostQuotationId(Long postId);
     List<Post> findByDebate(Debate debate);
+
+    List<Post> findByDebateOrderByPostCreatedAtDesc(Debate debate);
 }

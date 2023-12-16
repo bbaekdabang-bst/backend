@@ -21,7 +21,6 @@ public class Post {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="deb_id")
     private Debate debate;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     private User user;

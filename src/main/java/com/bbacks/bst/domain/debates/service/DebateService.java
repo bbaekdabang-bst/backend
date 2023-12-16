@@ -152,12 +152,16 @@ public class DebateService {
     // 토론방 피드
     public List<PostDto> debateFeed(Long debateId) {
         Debate debate = debateRepository.findById(debateId).get();
-        List<Post> postList = postRepository.findByDebate(debate);
+        List<Post> postList = postRepository.findByDebateOrderByPostCreatedAtDesc(debate);
 
         List<PostDto> posts = new ArrayList<>();
 
         if(!postList.isEmpty()){
             for(Post p:postList) {
+                String quotedPostContent = " ";
+                if (p.getPostQuotationId() != null) {
+                    quotedPostContent = postRepository.findById(p.getPostQuotationId()).get().getPostContent();
+                }
                 User user = p.getUser();
                 PostDto postDto = PostDto.builder()
                         .postId(p.getPostId())
@@ -165,7 +169,7 @@ public class DebateService {
                         .userNickname(user.getUserNickname())
                         .userPhoto(user.getUserPhoto())
                         .content(p.getPostContent())
-                        .quotedPostId(p.getPostQuotationId())
+                        .quotedPostContent(quotedPostContent)
                         .like(redisService.getLikeCount(p.getPostId()))
                         .dislike(redisService.getDislikeCount(p.getPostId()))
                         .isPro(p.getPostIsPro())
