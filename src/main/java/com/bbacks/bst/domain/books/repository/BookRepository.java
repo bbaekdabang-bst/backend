@@ -23,4 +23,8 @@ public interface BookRepository extends JpaRepository<Book, Long> {
             @Param("keyword2") String keyword2,
             @Param("keyword3") String keyword3
     );
+
+    List<Book> findByBookTitleContainingOrBookAuthorContaining(String keyword, String keyword1);
+
+    List<Book> findByBookCategory(Category category);
 }
